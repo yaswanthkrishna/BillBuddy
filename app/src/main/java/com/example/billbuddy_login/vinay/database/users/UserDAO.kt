@@ -1,0 +1,21 @@
+package com.example.billbuddy_login.vinay.database.users
+
+import androidx.lifecycle.LiveData
+import androidx.room.*
+
+@Dao
+interface UserDAO {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addUser(userEntity: UserEntity)
+
+    @Query("select * from user_table")
+    fun getUserList(): LiveData<List<UserEntity>>
+
+    @Update
+    suspend fun updateUser(userEntity: UserEntity)
+
+    @Delete
+    fun deleteUser(userEntity: UserEntity)
+
+}
+
