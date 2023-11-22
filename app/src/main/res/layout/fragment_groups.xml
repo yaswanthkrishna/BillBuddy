@@ -16,19 +16,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvOverallAmount" />
 
-    <RecyclerView
-        android:id="@+id/rvGroupsList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvOverallAmount" />
-
     <!-- Assuming you have a search bar -->
     <EditText
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search friends"
-        android:layout_below="@id/rvGroupsList" />
+        android:layout_below="@id/lvExpenses" />
 
     <!-- Assuming you have a filter button -->
     <Button

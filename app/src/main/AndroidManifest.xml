@@ -36,9 +36,6 @@
             android:name=".ResetPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".Dashboard"
-            android:exported="false" />
-        <activity
             android:name=".Sign_up_Screen_Activity"
             android:exported="false" />
         <activity

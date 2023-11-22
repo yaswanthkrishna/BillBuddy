@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.billbuddy_login.R
 import com.example.billbuddy_login.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy_login.vinay.views.SplitwiseApplication
 import com.example.billbuddy_login.databinding.ActivityFirstScreenBinding

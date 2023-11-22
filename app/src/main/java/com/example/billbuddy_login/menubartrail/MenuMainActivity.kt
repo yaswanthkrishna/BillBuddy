@@ -1,5 +1,6 @@
 package com.example.billbuddy_login.menubartrail
 
+import DashboardActivity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -14,7 +15,6 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.billbuddy_login.R
-import com.example.billbuddy_login.Dashboard
 import com.example.billbuddy_login.vinayactivity.AddExpenseActivity
 import com.example.billbuddy_login.vinay.database.sharedpreferences.PreferenceHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -74,7 +74,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         drawerLayout.closeDrawer(GravityCompat.START)
 
         if (item.itemId == R.id.nav_home) {
-            val intent = Intent(this, Dashboard::class.java)
+            val intent = Intent(this, DashboardActivity::class.java)
             startActivity(intent)
         }
         return true

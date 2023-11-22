@@ -1,5 +1,6 @@
 package com.example.billbuddy_login
 
+import DashboardActivity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -71,7 +72,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     // Sign in success, update UI with the signed-in user's information
                     val user = auth.currentUser
                     Log.d("Lakshmi", "signInWithEmail:success")
-                    startActivity(Intent(this@LoginActivity, Dashboard::class.java))
+                    startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("Lakshmi", "signInWithEmail:failure", task.exception)

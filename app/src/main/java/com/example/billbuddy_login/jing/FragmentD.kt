@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.billbuddy_login.R
 import com.example.billbuddy_login.databinding.FragmentDBinding
-import com.example.billbuddy_login.Dashboard
 import com.example.billbuddy_login.menubartrail.MenuMainActivity
 
 class FragmentD : Fragment() {
