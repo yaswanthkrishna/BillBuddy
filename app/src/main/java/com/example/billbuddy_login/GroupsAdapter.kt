@@ -1,10 +1,9 @@
-package com.example.billbuddy.ui.theme
+package com.example.billbuddy_login
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.billbuddy.R
 
 class GroupsAdapter(private var groups: List<Group>) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
 

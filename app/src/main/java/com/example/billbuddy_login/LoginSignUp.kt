@@ -1,5 +1,6 @@
 package com.example.billbuddy_login
 
+import DashboardActivity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -103,7 +104,7 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        val intent = Intent(this@LoginSignUp, Dashboard::class.java)
+        val intent = Intent(this@LoginSignUp, DashboardActivity::class.java)
         startActivity(intent)
     }
 

@@ -1,4 +1,4 @@
-package com.example.billbuddy.ui.theme
+package com.example.billbuddy_login
 
 data class Group(
     val id: String, // Unique identifier for the Group
