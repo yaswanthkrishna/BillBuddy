@@ -1,0 +1,41 @@
+<!-- item_person.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- TextView for displaying the person's name -->
+    <TextView
+        android:id="@+id/personNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="start"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <!-- EditText for entering amounts -->
+    <EditText
+        android:id="@+id/amountEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="numberDecimal"
+        android:hint="Enter Amount"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:gravity="end"/>
+
+    <!-- TextView for displaying the dollar sign -->
+    <TextView
+        android:id="@+id/dollar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="\u0024"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="start"/>
+</LinearLayout>

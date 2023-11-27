@@ -1,0 +1,8 @@
+<resources>
+    <string-array name="split_types">
+        <item>Equally</item>
+        <item>Unequally</item>
+        <item>Percentage</item>
+        <!-- Add more split types as needed -->
+    </string-array>
+</resources>
