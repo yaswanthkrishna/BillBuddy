@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.billbuddy_login"
+    namespace = "com.example.billbuddy"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.billbuddy_login"
+        applicationId = "com.example.billbuddy"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
