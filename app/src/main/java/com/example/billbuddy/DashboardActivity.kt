@@ -1,10 +1,9 @@
+
+package com.example.billbuddy
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.example.billbuddy.FriendsFragment
-import com.example.billbuddy.GroupsFragment
-import com.example.billbuddy.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 

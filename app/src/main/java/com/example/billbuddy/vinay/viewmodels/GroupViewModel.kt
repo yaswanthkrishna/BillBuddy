@@ -2,7 +2,6 @@ package com.example.billbuddy.vinay.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.example.billbuddy.vinay.database.groups.GroupEntity
 import com.example.billbuddy.vinay.repositories.GroupRepository
 
@@ -24,8 +23,8 @@ class GroupViewModel(val repository: GroupRepository) : ViewModel() {
     }
 }
 
-class GroupViewModelFactory(val repository: GroupRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+/*class GroupViewModelFactory(val repository: GroupRepository) : ViewModelProvider.Factory {
+    fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return GroupViewModel(repository) as T
     }
-}
+}*/

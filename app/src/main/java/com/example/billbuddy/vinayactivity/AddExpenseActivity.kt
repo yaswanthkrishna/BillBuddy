@@ -458,6 +458,4 @@ PercentageSplitFragment.OnPercentagesSavedListener{
         Log.d("onPercentagesSaved","$percentages")
         this.percentage=percentages
     }
-
-
 }

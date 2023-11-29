@@ -19,6 +19,9 @@
         android:theme="@style/Theme.BillBuddy_Login"
         tools:targetApi="31">
         <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".vinayactivity.AddExpenseActivity"
             android:exported="false" />
         <activity

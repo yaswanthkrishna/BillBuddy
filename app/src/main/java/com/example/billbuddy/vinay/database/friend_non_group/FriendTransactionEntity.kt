@@ -18,4 +18,5 @@ data class FriendTransactionEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int? = null
+
 }
