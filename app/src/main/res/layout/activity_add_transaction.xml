@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".vinayactivity.AddExpenseActivity">
+    tools:context=".vinayactivity.AddTransactionActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clLayout"
@@ -51,12 +51,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvContactAddTemp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/clLayout" />
-
     <TextView
         android:id="@+id/tvWithYou"
         android:layout_width="wrap_content"
@@ -64,19 +58,19 @@
         android:layout_margin="10dp"
         android:text="@string/with_you_and"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@id/etNameEmailPhone"
-        app:layout_constraintEnd_toStartOf="@id/etNameEmailPhone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/etNameEmailPhone" />
+        app:layout_constraintTop_toBottomOf="@id/clLayout" />
 
-    <EditText
+    <TextView
         android:id="@+id/etNameEmailPhone"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/enter_name_email_phone"
+        android:padding="10dp"
         android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvWithYou"
-        app:layout_constraintTop_toBottomOf="@id/rvContactAddTemp" />
+        app:layout_constraintTop_toBottomOf="@id/clLayout" />
 
     <ImageButton
         android:id="@+id/ibClose"
@@ -88,7 +82,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/lvContacts"
         app:layout_constraintStart_toEndOf="@+id/etNameEmailPhone"
-        app:layout_constraintTop_toBottomOf="@id/rvContactAddTemp" />
+        app:layout_constraintTop_toBottomOf="@id/clLayout" />
 
     <ListView
         android:id="@+id/lvContacts"
@@ -217,17 +211,15 @@
             app:layout_constraintStart_toEndOf="@id/tvAndSplit"
             app:layout_constraintTop_toBottomOf="@id/llLayout2">
 
-            <!-- Replace TextView with Spinner -->
-            <Spinner
-                android:id="@+id/splittype"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/dp_10"
                 android:paddingEnd="@dimen/dp_10"
-                android:entries="@array/split_types"
-                android:background="@null" />
+                android:text="@string/equally"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_16" />
         </androidx.cardview.widget.CardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -284,7 +276,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingEnd="@dimen/dp_30"
-            android:text="@string/no" />
+            android:text="yes" />
 
     </LinearLayout>
 
@@ -307,11 +299,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivCamera"
         app:layout_constraintTop_toTopOf="@id/ivCamera" />
-
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
