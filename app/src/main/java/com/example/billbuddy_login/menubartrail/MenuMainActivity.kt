@@ -14,9 +14,16 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+<<<<<<< Updated upstream:app/src/main/java/com/example/billbuddy_login/menubartrail/MenuMainActivity.kt
 import com.example.billbuddy_login.R
 import com.example.billbuddy_login.vinayactivity.AddExpenseActivity
 import com.example.billbuddy_login.vinay.database.sharedpreferences.PreferenceHelper
+=======
+import com.example.billbuddy.DashboardActivity
+import com.example.billbuddy.R
+import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
+import com.example.billbuddy.vinayactivity.AddExpenseActivity
+>>>>>>> Stashed changes:app/src/main/java/com/example/billbuddy/menubartrail/MenuMainActivity.kt
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 

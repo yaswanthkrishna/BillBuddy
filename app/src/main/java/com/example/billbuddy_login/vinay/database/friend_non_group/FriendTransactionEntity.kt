@@ -11,7 +11,9 @@ data class FriendTransactionEntity(
     @ColumnInfo(name = "number") var number: String,
     @ColumnInfo(name = "amount") var amount: Int,
     @ColumnInfo(name = "time") var time: String,
-    @ColumnInfo(name = "description") var description: String
+    @ColumnInfo(name = "description") var description: String,
+    @ColumnInfo(name = "paidBy") var paidBy: String,        // New column for PaidBy
+    @ColumnInfo(name = "splitType") var splitType: String  // New column for SplitType
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
