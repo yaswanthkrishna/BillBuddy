@@ -1,5 +1,5 @@
-package com.example.billbuddy
 
+package com.example.billbuddy
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.adapter.FragmentStateAdapter

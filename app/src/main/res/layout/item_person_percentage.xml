@@ -1,0 +1,41 @@
+<!-- item_person_percentage.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- TextView for displaying the person's name -->
+    <TextView
+        android:id="@+id/personNameTextViewPercentage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="start"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <!-- EditText for entering percentage -->
+    <EditText
+        android:id="@+id/percentageEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="numberDecimal"
+        android:hint="Enter Percentage"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:gravity="end"/>
+
+    <!-- TextView for displaying the percentage sign -->
+    <TextView
+        android:id="@+id/percentageSign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="%"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="start"/>
+</LinearLayout>
