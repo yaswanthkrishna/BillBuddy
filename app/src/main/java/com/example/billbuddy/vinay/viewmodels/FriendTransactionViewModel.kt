@@ -28,7 +28,7 @@ class FriendTransactionViewModelFactory(val repository: FriendTransactionReposit
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FriendTransactionViewModel::class.java)) {
             return FriendTransactionViewModel(repository) as T
         }
