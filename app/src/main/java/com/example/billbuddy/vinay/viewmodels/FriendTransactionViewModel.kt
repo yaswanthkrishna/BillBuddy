@@ -2,6 +2,7 @@ package com.example.billbuddy.vinay.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.billbuddy.vinay.database.friend_non_group.FriendTransactionEntity
 import com.example.billbuddy.vinay.repositories.FriendTransactionRepository
 
@@ -23,7 +24,7 @@ class FriendTransactionViewModel(val repository: FriendTransactionRepository) : 
     }
 }
 
-/*class FriendTransactionViewModelFactory(val repository: FriendTransactionRepository) :
+class FriendTransactionViewModelFactory(val repository: FriendTransactionRepository) :
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -33,4 +34,4 @@ class FriendTransactionViewModel(val repository: FriendTransactionRepository) : 
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
-}*/
+}

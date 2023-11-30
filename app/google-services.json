@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "980241416040",
+    "firebase_url": "https://billbuddy-ab42a-default-rtdb.firebaseio.com",
     "project_id": "billbuddy-ab42a",
     "storage_bucket": "billbuddy-ab42a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980241416040:android:3fa564111413f9ff8b20dd",
+        "mobilesdk_app_id": "1:980241416040:android:51299212d9cbb1508b20dd",
         "android_client_info": {
-          "package_name": "com.example.billbuddy"
+          "package_name": "com.example.billbuddy_login"
         }
       },
       "oauth_client": [
@@ -25,7 +26,49 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980241416040-mt8bbuh11mrd4rg6gjotgocgis7s70nl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980241416040:android:3fa564111413f9ff8b20dd",
+        "android_client_info": {
+          "package_name": "com.example.billbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980241416040-leo0sbn9n0kk0up0tqn1lcae507a61f0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.billbuddy",
+            "certificate_hash": "cfcc76b2f425c4318a2b444fb87861d9f869942f"
+          }
+        },
+        {
+          "client_id": "980241416040-mt8bbuh11mrd4rg6gjotgocgis7s70nl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDloEDwxKymeSA2oNzFm8t1CWMofutrcAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980241416040-mt8bbuh11mrd4rg6gjotgocgis7s70nl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
