@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:980241416040:android:3fa564111413f9ff8b20dd",
         "android_client_info": {
-          "package_name": "com.example.billbuddy_login"
+          "package_name": "com.example.billbuddy"
         }
       },
       "oauth_client": [
@@ -47,7 +47,7 @@
           "client_id": "980241416040-leo0sbn9n0kk0up0tqn1lcae507a61f0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.billbuddy_login",
+            "package_name": "com.example.billbuddy",
             "certificate_hash": "cfcc76b2f425c4318a2b444fb87861d9f869942f"
           }
         },
