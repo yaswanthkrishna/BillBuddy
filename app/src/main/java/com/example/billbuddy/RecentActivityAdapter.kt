@@ -1,36 +1,27 @@
-package com.example.billbuddy_login
+package com.example.billbuddy
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.billbuddy_login.databinding.ActivityItemBinding
-import com.example.billbuddy_login.vinay.viewmodels.FriendTransactionViewModel
-import com.example.billbuddy_login.vinay.viewmodels.GroupTransactionViewModel
-import com.example.billbuddy_login.vinay.viewmodels.UserViewModel
+import com.example.billbuddy.databinding.ActivityItemBinding
 import java.sql.Timestamp
 
-class RecentActivityAdapter(val activities : List<Int>,val context: Context) :
-    androidx.recyclerview.widget.RecyclerView.Adapter<RecentActivityAdapter.ViewHolder>(){
-    // delete if database involved
+class RecentActivityAdapter(val activities : List<Any>,val context: Context) :
+    RecyclerView.Adapter<RecentActivityAdapter.ViewHolder>(){
+    // temporary list mimicking database list
     var data = listOf(mapOf("description" to "jing record payment from nowhere", "expected action" to "You paid $20", "timeStamp" to Timestamp(System.currentTimeMillis())))
-    lateinit var friendTransactionViewmodel : FriendTransactionViewModel
-    lateinit var groupTransactionViewModel: GroupTransactionViewModel
-    lateinit var userViewModel: UserViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
-        // inflate item view
+        // inflate binding
         val binding = ActivityItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    // MUST
-    override fun getItemCount(): Int {
-        // number of items in the list
-        return data.size //change if database acquired
-    }
+    // function for recyclerview to know how many items needs to display
+    override fun getItemCount() = data.size
 
-    // MUST
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // bind each item in the list to a view
         with(holder){
