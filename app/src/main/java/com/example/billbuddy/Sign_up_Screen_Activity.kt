@@ -62,14 +62,13 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
 
                 createDatabase()
                 val userEntity = UserEntity(
-                    binding.etSignUpFullName.text.toString(),
-                    binding.etSignUpPhone.text.toString(),
-                    binding.etSignUpEmail.editText?.text!!.toString(),
-                    binding.etSignUpPassword.editText?.text!!.toString(),
-                    "",
-                    "0",
-                    "0",
-                    0
+                    name=binding.etSignUpFullName.text.toString(),
+                    phone=binding.etSignUpPhone.text.toString(),
+                    email=binding.etSignUpEmail.editText?.text!!.toString(),
+                    password=binding.etSignUpPassword.editText?.text!!.toString(),
+                    gender="",
+                    owe="0",
+                    owes="0"
                 )
 
                 userViewModel.addUser(userEntity)

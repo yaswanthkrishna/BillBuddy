@@ -12,8 +12,13 @@ interface TransactionDAO {
     fun getTransactionList(): LiveData<List<TransactionEntity>>
 
     @Update
-    fun updateTransaction(transactionEntity: TransactionEntity)
+    suspend fun updateTransaction(transactionEntity: TransactionEntity)
 
     @Delete
     fun deleteTransaction(transactionEntity: TransactionEntity)
+
+    @Query("SELECT MAX(transaction_id)+1 FROM Transaction_table")
+    suspend fun getNextTransactionId(): Long?
+
+
 }

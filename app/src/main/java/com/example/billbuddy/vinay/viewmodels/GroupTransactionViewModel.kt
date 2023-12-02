@@ -1,32 +1,49 @@
+// GroupTransactionViewModel.kt
+
 package com.example.billbuddy.vinay.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModelProvider
-import com.example.billbuddy.vinay.database.transactions.TransactionEntity
+import com.example.billbuddy.vinay.database.groups.GroupTransactionDAO
+import com.example.billbuddy.vinay.database.groups.GroupTransactionEntity
 import com.example.billbuddy.vinay.repositories.GroupTransactionRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class GroupTransactionViewModel(val repository: GroupTransactionRepository) : ViewModel() {
-    fun addTransaction(entity: TransactionEntity) {
-        repository.addTransaction(entity)
+class GroupTransactionViewModel(private val repository: GroupTransactionRepository) : ViewModel() {
+
+    suspend fun addGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
+        withContext(Dispatchers.IO) {
+            repository.addGroupTransaction(groupTransactionEntity)
+        }
     }
 
-    fun getTransactionsList(): LiveData<List<TransactionEntity>> {
-        return repository.getTransactionsList()
+    fun getGroupTransactions(groupId: Long): LiveData<List<GroupTransactionEntity>> {
+        return repository.getGroupTransactions(groupId)
     }
 
-    fun updateTransaction(entity: TransactionEntity) {
-        repository.updateTransaction(entity)
+    suspend fun updateGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
+        withContext(Dispatchers.IO) {
+            repository.updateGroupTransaction(groupTransactionEntity)
+        }
     }
 
-    fun deleteTransaction(entity: TransactionEntity) {
-        repository.deleteTransaction(entity)
+    suspend fun deleteGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
+        withContext(Dispatchers.IO) {
+            repository.deleteGroupTransaction(groupTransactionEntity)
+        }
     }
 }
 
-class GroupTransactionViewModelFactory(val repository: GroupTransactionRepository) :
-    ViewModelProvider.Factory {
+class GroupTransactionViewModelFactory(private val repository: GroupTransactionRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return GroupTransactionViewModel(repository) as T
+        if (modelClass.isAssignableFrom(GroupTransactionViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return GroupTransactionViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

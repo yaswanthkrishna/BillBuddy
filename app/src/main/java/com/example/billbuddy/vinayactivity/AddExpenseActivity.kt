@@ -24,7 +24,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import com.example.billbuddy.R
 import com.example.billbuddy.databinding.ActivityAddExpenseBinding
 import com.example.billbuddy.jing.PercentageSplitFragment
@@ -32,17 +34,24 @@ import com.example.billbuddy.jing.NameSelectionFragment
 import com.example.billbuddy.jing.OnNameSelectedListener
 import com.example.billbuddy.jing.UnequallySplitFragment
 import com.example.billbuddy.menubartrail.MenuMainActivity
-import com.example.billbuddy.vinay.database.friend_non_group.FriendTransactionEntity
+import com.example.billbuddy.vinay.database.SplitwiseDatabase
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
+import com.example.billbuddy.vinay.database.transactions.NonGroupTransactionMemberEntity
+import com.example.billbuddy.vinay.database.transactions.TransactionDAO
+import com.example.billbuddy.vinay.database.transactions.TransactionEntity
 import com.example.billbuddy.vinay.database.users.UserEntity
 import com.example.billbuddy.vinay.recyclerviews.ContactCommunicator
 import com.example.billbuddy.vinay.recyclerviews.ContactTempAddAdapter
 import com.example.billbuddy.vinay.recyclerviews.ContactTempModel
-import com.example.billbuddy.vinay.viewmodels.FriendTransactionViewModel
-import com.example.billbuddy.vinay.viewmodels.FriendTransactionViewModelFactory
+import com.example.billbuddy.vinay.repositories.TransactionRepository
+import com.example.billbuddy.vinay.viewmodels.NonGroupTransactionMemberViewModel
+import com.example.billbuddy.vinay.viewmodels.NonGroupTransactionMemberViewModelFactory
+import com.example.billbuddy.vinay.viewmodels.TransactionViewModel
+import com.example.billbuddy.vinay.viewmodels.TransactionViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.UserViewModel
 import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
 import com.example.billbuddy.vinay.views.SplitwiseApplication
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -58,10 +67,12 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     private lateinit var contactAdapter: ContactTempAddAdapter
     private lateinit var to: IntArray
     private val preferenceHelper by lazy { PreferenceHelper(this) }
-    private lateinit var friendTransactionViewModel: FriendTransactionViewModel
+    private lateinit var transactionViewModel: TransactionViewModel
     private lateinit var userViewModel: UserViewModel
-    private var amounts: Map<String, Int> = emptyMap()
+    private lateinit var nonGroupTransactionMemberViewModel: NonGroupTransactionMemberViewModel
+    private var amounts: Map<String, Double> = emptyMap()
     private var percentage: Map<String, Int> = emptyMap()
+    private lateinit var transactionRepository: TransactionRepository
 
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -72,7 +83,6 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         setContentView(view)
 
         val spinnerSplitType = findViewById<Spinner>(R.id.splittype)
-        val fragmentContainer = findViewById<FrameLayout>(R.id.fragmentContainer)
 
         spinnerSplitType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
@@ -88,7 +98,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
                         contactList.add(currentUserModel)
                     }
 
-                    loadFragment(UnequallySplitFragment(), contactList, binding.tvAmount.text.toString().toInt())
+                    loadFragment(UnequallySplitFragment(), contactList, binding.tvAmount.text.toString().toDouble())
                 } else if ("Percentage" == selectedSplitType) {
                     val currentUser = getCurrentUser()
                     if (currentUser != null && !isCurrentUserInContactList(currentUser)) {
@@ -96,7 +106,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
                         contactList.add(currentUserModel)
                     }
                     // Load other fragment for Custom split typ
-                    loadFragment(PercentageSplitFragment(), contactList, binding.tvAmount.text.toString().toInt())
+                    loadFragment(PercentageSplitFragment(), contactList, binding.tvAmount.text.toString().toDouble())
                 }
             }
 
@@ -105,11 +115,8 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             }
         }
 
-
         createDatabase()
         getUsersList()
-
-
 
         binding.tvBackArrow.setOnClickListener {
             finish()
@@ -170,17 +177,19 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
                 preferenceHelper.readBooleanFromPreference(SplitwiseApplication.PREF_IS_USER_LOGIN)
             ) {
                 val dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
-                val totalAmount = binding.tvAmount.text.toString().toInt()
+                val totalAmount = binding.tvAmount.text.toString().toDouble()
 
                 if (totalAmount > 0) {
                     val splitType = binding.splittype.selectedItem.toString()
 
-                    if (splitType == "Equally") {
-                        handleEquallySplit(totalAmount, dtf)
-                    } else if (splitType == "Unequally") {
-                        handleUnequallySplit(totalAmount, dtf)
-                    } else if (splitType == "Percentage"){
-                        handlePercentageSplit(totalAmount, dtf)
+                    lifecycleScope.launch {
+                        if (splitType == "Equally") {
+                            handleEquallySplit(totalAmount, dtf)
+                        } else if (splitType == "Unequally") {
+                            handleUnequallySplit(totalAmount, dtf)
+                        } else if (splitType == "Percentage") {
+                            handlePercentageSplit(totalAmount, dtf)
+                        }
                     }
 
                 } else {
@@ -200,7 +209,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
     private fun getCurrentUser(): UserEntity? {
 
-        val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
 
         if (currentUser != null) {
             Log.d("AddExpenseActivity", "Current user fetched: ${currentUser.name}, ${currentUser.phone}")
@@ -216,9 +225,9 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleEquallySplit(totalAmount: Int, dtf: DateTimeFormatter) {
+    private suspend fun handleEquallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Add currentUser to contactList
-        val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             val currentUserModel = ContactTempModel(it.phone, it.name ?: "")
             contactList.add(currentUserModel)
@@ -227,35 +236,66 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         val numberOfPeople = contactList.size
         val eachShare = totalAmount / numberOfPeople
 
-        for (i in contactList) {
-            val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
-                // If Paidby is "You," use the current user's name
-                currentUser?.name ?: ""
-            } else {
-                // Otherwise, use the name in the TextView
-                binding.paidbywho.text.toString()
-            }
+        val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
+            // If Paidby is "You," use the current user's name
+            currentUser?.name ?: ""
+        } else {
+            // Otherwise, use the name in the TextView
+            binding.paidbywho.text.toString()
+        }
 
-            val friendTransactionEntity = FriendTransactionEntity(
-                preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID),
-                i.name ?: "",
-                i.number ?: "",
-                eachShare,
-                dtf.format(LocalDateTime.now()),
-                binding.tvDescription.text.toString(),
-                payerName,
-                binding.splittype.selectedItem.toString()
+
+        var nextTransactionId = transactionRepository.getNextTransactionId()
+
+        if(nextTransactionId==null){
+            nextTransactionId=1
+        }
+        Log.d("nextTransactionId","$nextTransactionId")
+
+
+        val transactionEntity = TransactionEntity(
+            transactionId = nextTransactionId ?: 0L,
+            totalAmount = totalAmount,
+            paidByUserId = userViewModel.getUserIdByName(payerName) ?: 0L,
+            splitType = binding.splittype.selectedItem.toString(),
+            groupFlag = false,
+            receiptImage = null,
+            comments = null,
+            description = binding.tvDescription.text.toString(),
+            transactionDateTime = dtf.format(LocalDateTime.now())
+        )
+
+        // Insert the TransactionEntity
+        transactionViewModel.addTransaction(transactionEntity)
+
+        for (i in contactList) {
+            var amountOwes = 0.0
+            var amountOwe = 0.0
+
+            if(i.name==payerName){
+                amountOwes = totalAmount - eachShare
+            }
+            else{
+                amountOwe=eachShare
+            }
+            val nonGroupTransactionMemberEntity = NonGroupTransactionMemberEntity(
+                transactionId = nextTransactionId ?: 0L,
+                userId = userViewModel.getUserIdByName(i.name ?: "") ?: 0L,
+                amountOwe = amountOwe,
+                amountOwes = amountOwes
             )
-            friendTransactionViewModel.addFriendTransaction(friendTransactionEntity)
+
+            // Insert the NonGroupTransactionMemberEntity
+            nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
         }
 
         currentUser?.let {
             if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
                 // If the payer is the current user, update the owe amount
-                it.owes = (it.owes.toInt() + (totalAmount - eachShare)).toString()
+                it.owes = (it.owes.toDouble() + (totalAmount - eachShare)).toString()
             } else {
                 // If the payer is someone else, update the owed amount
-                it.owe = (it.owe.toInt() + eachShare).toString()
+                it.owe = (it.owe.toDouble() + eachShare).toString()
             }
             userViewModel.updateUser(it)
         }
@@ -275,41 +315,70 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleUnequallySplit(totalAmount: Int, dtf: DateTimeFormatter) {
+    private suspend fun handleUnequallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
+
+        val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
+            // If Paidby is "You," use the current user's name
+            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            currentUser?.name ?: ""
+        } else {
+            // Otherwise, use the name in the TextView
+            binding.paidbywho.text.toString()
+        }
+
+        var nextTransactionId = transactionRepository.getNextTransactionId()
+
+        if(nextTransactionId==null){
+            nextTransactionId=1
+        }
+
+        val transactionEntity= TransactionEntity(
+            transactionId = nextTransactionId,
+            totalAmount=totalAmount,
+            paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
+            splitType=binding.splittype.selectedItem.toString(),
+            groupFlag=false,
+            receiptImage=null,
+            comments=null,
+            description=binding.tvDescription.text.toString(),
+            transactionDateTime=dtf.format(LocalDateTime.now())
+        )
+        transactionViewModel.addTransaction(transactionEntity)
+
+
         for ((name, amount) in amounts) {
             val phoneNumber = contactList.firstOrNull { it.name == name }?.number
-            val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
-                // If Paidby is "You," use the current user's name
-                val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
-                currentUser?.name ?: ""
-            } else {
-                // Otherwise, use the name in the TextView
-                binding.paidbywho.text.toString()
-            }
 
-            val friendTransactionEntity = FriendTransactionEntity(
-                preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID),
-                name,
-                phoneNumber ?: "", // If phoneNumber is null, default to an empty string
-                amount,
-                dtf.format(LocalDateTime.now()),
-                binding.tvDescription.text.toString(),
-                payerName,
-                binding.splittype.selectedItem.toString()
+            var amountOwes = 0.0
+            var amountOwe = 0.0
+
+            if(name==payerName){
+                amountOwes = totalAmount - amount
+            }
+            else{
+                amountOwe=amount
+            }
+            val nonGroupTransactionMemberEntity = NonGroupTransactionMemberEntity(
+                transactionId = nextTransactionId,
+                userId = userViewModel.getUserIdByName(name) ?: 0L,
+                amountOwe = amountOwe,
+                amountOwes = amountOwes
             )
-            friendTransactionViewModel.addFriendTransaction(friendTransactionEntity)
+            // Insert the NonGroupTransactionMemberEntity
+            nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
+
         }
 
-        val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
                 // If the payer is the current user, update the owe amount
-                val currentUserAmount = amounts[it.name] ?: 0 // Default to 0 if it.name is not found in amounts
-                it.owes = (it.owes.toInt() + (totalAmount - currentUserAmount)).toString()
+                val currentUserAmount = amounts[it.name] ?: 0.0 // Default to 0 if it.name is not found in amounts
+                it.owes = (it.owes.toDouble() + (totalAmount - currentUserAmount)).toString()
             } else {
                 // If the payer is someone else, update the owed amount
-                val currentUserAmount = amounts[it.name] ?: 0
-                it.owe = (it.owe.toInt() + currentUserAmount).toString()
+                val currentUserAmount = amounts[it.name] ?: 0.0
+                it.owe = (it.owe.toDouble() + currentUserAmount).toString()
             }
             userViewModel.updateUser(it)
         }
@@ -327,9 +396,37 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handlePercentageSplit(totalAmount: Int, dtf: DateTimeFormatter) {
+    private suspend fun handlePercentageSplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Get the list of selected persons and their assigned percentages
         val percentages = percentage
+
+        val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
+            // If Paidby is "You," use the current user's name
+            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            currentUser?.name ?: ""
+        } else {
+            // Otherwise, use the name in the TextView
+            binding.paidbywho.text.toString()
+        }
+
+        var nextTransactionId = transactionRepository.getNextTransactionId()
+
+        if(nextTransactionId==null){
+            nextTransactionId=1
+        }
+
+        val transactionEntity= TransactionEntity(
+            transactionId = nextTransactionId,
+            totalAmount=totalAmount,
+            paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
+            splitType=binding.splittype.selectedItem.toString(),
+            groupFlag=false,
+            receiptImage=null,
+            comments=null,
+            description=binding.tvDescription.text.toString(),
+            transactionDateTime=dtf.format(LocalDateTime.now())
+        )
+        transactionViewModel.addTransaction(transactionEntity)
 
         for (person in contactList) {
             val name = person.name ?: ""
@@ -341,30 +438,27 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             // Calculate the amount for the current person based on the percentage
             val amount = (totalAmount * personPercentage) / 100
 
-            // Create FriendTransactionEntity and add to the ViewModel
-            val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
-                // If Paidby is "You," use the current user's name
-                val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
-                currentUser?.name ?: ""
-            } else {
-                // Otherwise, use the name in the TextView
-                binding.paidbywho.text.toString()
-            }
+            var amountOwes = 0.0
+            var amountOwe = 0.0
 
-            val friendTransactionEntity = FriendTransactionEntity(
-                preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID),
-                name,
-                phoneNumber,
-                amount,
-                dtf.format(LocalDateTime.now()),
-                binding.tvDescription.text.toString(),
-                payerName,
-                binding.splittype.selectedItem.toString()
+            if(name==payerName){
+                amountOwes = totalAmount - amount
+            }
+            else{
+                amountOwe=amount
+            }
+            val nonGroupTransactionMemberEntity = NonGroupTransactionMemberEntity(
+                transactionId = nextTransactionId,
+                userId = userViewModel.getUserIdByName(name) ?: 0L,
+                amountOwe = amountOwe,
+                amountOwes = amountOwes
             )
-            friendTransactionViewModel.addFriendTransaction(friendTransactionEntity)
+            // Insert the NonGroupTransactionMemberEntity
+            nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
+
         }
 
-        val currentUser = usersList.firstOrNull { it.id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             val totalPercentage = percentage.values.sum()
             val currentUserPercentage = percentage[it.name] ?: 0
@@ -374,11 +468,11 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
             if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
                 // If the payer is the current user, update the owe amount
-                val currentUserAmount = amounts[it.name] ?: 0 // Default to 0 if it.name is not found in amounts
-                it.owes = (it.owes.toInt() + (totalAmount - currentUserAmount)).toString()
+                val currentUserAmount = amounts[it.name] ?: 0.0 // Default to 0 if it.name is not found in amounts
+                it.owes = (it.owes.toDouble() + (totalAmount - currentUserAmount)).toString()
             } else {
                 // If the payer is someone else, update the owed amount
-                it.owe = (it.owe.toInt() + currentUserAmount).toString()
+                it.owe = (it.owe.toDouble() + currentUserAmount).toString()
             }
             userViewModel.updateUser(it)
         }
@@ -402,10 +496,10 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         })
     }
 
-    private fun loadFragment(fragment: Fragment, selectedPersons: List<ContactTempModel>,amount: Int) {
+    private fun loadFragment(fragment: Fragment, selectedPersons: List<ContactTempModel>,amount: Double) {
         val bundle = Bundle()
         bundle.putParcelableArrayList("selectedPersons", ArrayList(selectedPersons))
-        bundle.putInt("amount", amount)
+        bundle.putDouble("amount", amount)
         fragment.arguments = bundle
 
         val transaction = supportFragmentManager.beginTransaction()
@@ -468,15 +562,24 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
     private fun createDatabase() {
         val appClass = application as SplitwiseApplication
-        val friendRepository = appClass.friendsRepository
-        val friendViewModelFactory = FriendTransactionViewModelFactory(friendRepository)
+
+        transactionRepository = appClass.transactionRepository
+        val transactionViewModelFactory = TransactionViewModelFactory(transactionRepository)
+
         val userRepository = appClass.userRepository
         val userViewModelFactory = UserViewModelFactory(userRepository)
 
+        val nonGroupTransactionMemberRepository = appClass.nongroupTransactionMemberRepository
+        val nonGroupTransactionMemberViewModelFactory = NonGroupTransactionMemberViewModelFactory(nonGroupTransactionMemberRepository)
+
         userViewModel = ViewModelProvider(this, userViewModelFactory)
             .get(UserViewModel::class.java)
-        friendTransactionViewModel = ViewModelProvider(this, friendViewModelFactory)
-            .get(FriendTransactionViewModel::class.java)
+
+        transactionViewModel = ViewModelProvider(this, transactionViewModelFactory)
+            .get(TransactionViewModel::class.java)
+
+        nonGroupTransactionMemberViewModel = ViewModelProvider(this, nonGroupTransactionMemberViewModelFactory)
+            .get(NonGroupTransactionMemberViewModel::class.java)
     }
 
     override fun onContactDelete(tempModel: ContactTempModel) {
@@ -513,7 +616,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         supportFragmentManager.popBackStack()
     }
 
-    override fun onAmountsSaved(amounts: Map<String, Int>) {
+    override fun onAmountsSaved(amounts: Map<String, Double>) {
         Log.d("OnAmountSaved","$amounts")
         this.amounts =amounts
     }

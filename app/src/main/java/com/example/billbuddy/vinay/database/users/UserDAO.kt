@@ -17,5 +17,8 @@ interface UserDAO {
     @Delete
     fun deleteUser(userEntity: UserEntity)
 
+    @Query("SELECT user_id FROM user_table WHERE name = :userName")
+    fun getUserIdByName(userName: String): Long?
+
 }
 
