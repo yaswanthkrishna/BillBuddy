@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
 import com.example.billbuddy.vinay.recyclerviews.ContactTempModel
+import kotlin.properties.Delegates
 
 class PercentageSplitFragment : Fragment() {
 

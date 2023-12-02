@@ -28,4 +28,8 @@ class UserRepository(val DAO: UserDAO) {
     fun deleteUser(entity: UserEntity) {
         DAO.deleteUser(entity)
     }
+
+    fun getUserIdByName(userName: String): Long? {
+        return DAO.getUserIdByName(userName)
+    }
 }

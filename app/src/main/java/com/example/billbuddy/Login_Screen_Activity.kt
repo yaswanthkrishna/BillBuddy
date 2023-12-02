@@ -45,7 +45,7 @@ class Login_Screen_Activity : AppCompatActivity() {
                         intent2.putExtra("name", i.name)
                         preferenceHelper.writeIntToPreference(
                             SplitwiseApplication.PREF_USER_ID,
-                            i.id!!
+                            i.user_id!!
                         )
                         preferenceHelper.writeBooleanToPreference(
                             SplitwiseApplication.PREF_IS_USER_LOGIN,

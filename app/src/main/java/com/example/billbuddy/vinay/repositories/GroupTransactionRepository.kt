@@ -1,30 +1,33 @@
 package com.example.billbuddy.vinay.repositories
 
 import androidx.lifecycle.LiveData
-
-import com.example.billbuddy.vinay.database.transactions.TransactionDAO
-import com.example.billbuddy.vinay.database.transactions.TransactionEntity
+import com.example.billbuddy.vinay.database.groups.GroupTransactionDAO
+import com.example.billbuddy.vinay.database.groups.GroupTransactionEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GroupTransactionRepository(val DAO: TransactionDAO) {
-
-    fun addTransaction(entity: TransactionEntity) {
+class GroupTransactionRepository(private val dao: GroupTransactionDAO) {
+    suspend fun addGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            DAO.addTransaction(entity)
+            dao.addGroupTransaction(groupTransactionEntity)
         }
     }
 
-    fun getTransactionsList(): LiveData<List<TransactionEntity>> {
-        return DAO.getTransactionList()
+    fun getGroupTransactions(groupId: Long): LiveData<List<GroupTransactionEntity>> {
+        return dao.getGroupTransactions(groupId)
     }
 
-    fun updateTransaction(entity: TransactionEntity) {
-        DAO.updateTransaction(entity)
+    suspend fun updateGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.updateGroupTransaction(groupTransactionEntity)
+        }
     }
 
-    fun deleteTransaction(entity: TransactionEntity) {
-        DAO.deleteTransaction(entity)
+    suspend fun deleteGroupTransaction(groupTransactionEntity: GroupTransactionEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.deleteGroupTransaction(groupTransactionEntity)
+        }
     }
 }
+

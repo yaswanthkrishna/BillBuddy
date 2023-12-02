@@ -26,7 +26,7 @@ class UnequallySplitFragment : Fragment() {
     private lateinit var selectedPersons: List<ContactTempModel>
     private lateinit var amountTextView: TextView  // Declare amountTextView here
     private lateinit var amountLeftTextView: TextView
-    private var amount:Int = 0
+    private var amount:Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +69,7 @@ class UnequallySplitFragment : Fragment() {
 
         arguments?.let {
             selectedPersons = it.getParcelableArrayList<ContactTempModel>("selectedPersons") ?: emptyList()
-            amount = it.getInt("amount", 0)
+            amount = it.getDouble("amount", 0.0)
             Log.d("AmountFragment","$amount")
 
             amountTextView.text = "Of $amount"
@@ -103,7 +103,7 @@ class UnequallySplitFragment : Fragment() {
 
     // Define an interface for communication with AddExpenseActivity
     interface OnAmountsSavedListener {
-        fun onAmountsSaved(amounts: Map<String, Int>)
+        fun onAmountsSaved(amounts: Map<String, Double>)
     }
 
     private fun updateAmountLeft() {
@@ -182,12 +182,12 @@ class UnequallySplitFragment : Fragment() {
             return personList.size
         }
 
-        fun getAmountsList(): Map<String, Int> {
-            val amountsMap = mutableMapOf<String, Int>()
+        fun getAmountsList(): Map<String, Double> {
+            val amountsMap = mutableMapOf<String, Double>()
             for (i in 0 until itemCount) {
                 val person = personList[i]
                 val amountStr = amountEditTextList[i].text.toString()
-                val amount = if (amountStr.isNotEmpty()) amountStr.toInt() else 0
+                val amount = if (amountStr.isNotEmpty()) amountStr.toDouble() else 0.0
                 amountsMap[person.name ?: ""] = amount
             }
             return amountsMap
