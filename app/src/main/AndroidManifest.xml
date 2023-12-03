@@ -31,6 +31,9 @@
         <activity
             android:name=".FirstScreen"
             android:exported="false" />
+        <activity
+            android:name=".vinayactivity.AddFriendActivity"
+            android:exported="false" />
 
         <activity
             android:name=".GroupActivity"

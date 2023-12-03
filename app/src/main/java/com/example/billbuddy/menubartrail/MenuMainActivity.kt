@@ -17,6 +17,7 @@ import com.example.billbuddy.DashboardActivity
 import com.example.billbuddy.R
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
+import com.example.billbuddy.vinayactivity.AddFriendActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -73,10 +74,32 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawerLayout.closeDrawer(GravityCompat.START)
 
-        if (item.itemId == R.id.nav_home) {
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
+        when (item.itemId) {
+            R.id.nav_home -> {
+                val intent = Intent(this, DashboardActivity::class.java)
+                startActivity(intent)
+            }
         }
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_addfriend -> {
+                // Handle Add Friends on Splitwise click
+                // Example: open a new activity or fragment
+                val intent = Intent(this, AddFriendActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.action_creategroupe -> {
+                // Handle Create Group click
+                // Example: open a new activity or fragment
+                val intent = Intent(this, AddExpenseActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 }

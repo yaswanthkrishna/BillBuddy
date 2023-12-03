@@ -21,7 +21,7 @@ class ContactFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_contact, container, false)
         val preferenceHelper = PreferenceHelper(view.context)
         preferenceHelper.writeBooleanToPreference(SplitwiseApplication.PREF_IS_USER_LOGIN, false)
-        preferenceHelper.writeIntToPreference(SplitwiseApplication.PREF_USER_ID, 0)
+        preferenceHelper.writeLongToPreference(SplitwiseApplication.PREF_USER_ID, 0)
 
         return view
     }
