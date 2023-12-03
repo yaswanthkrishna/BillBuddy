@@ -43,7 +43,7 @@ class Login_Screen_Activity : AppCompatActivity() {
                     if (i.email == email && i.password == password) {
                         val intent2 = Intent(this, FragmentMainActivity::class.java)
                         intent2.putExtra("name", i.name)
-                        preferenceHelper.writeIntToPreference(
+                        preferenceHelper.writeLongToPreference(
                             SplitwiseApplication.PREF_USER_ID,
                             i.user_id!!
                         )

@@ -209,7 +209,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
     private fun getCurrentUser(): UserEntity? {
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
 
         if (currentUser != null) {
             Log.d("AddExpenseActivity", "Current user fetched: ${currentUser.name}, ${currentUser.phone}")
@@ -227,7 +227,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleEquallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Add currentUser to contactList
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             val currentUserModel = ContactTempModel(it.phone, it.name ?: "")
             contactList.add(currentUserModel)
@@ -319,7 +319,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
         val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
             // If Paidby is "You," use the current user's name
-            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
             currentUser?.name ?: ""
         } else {
             // Otherwise, use the name in the TextView
@@ -369,7 +369,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
         }
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
                 // If the payer is the current user, update the owe amount
@@ -402,7 +402,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
         val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
             // If Paidby is "You," use the current user's name
-            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
             currentUser?.name ?: ""
         } else {
             // Otherwise, use the name in the TextView
@@ -458,7 +458,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
         }
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             val totalPercentage = percentage.values.sum()
             val currentUserPercentage = percentage[it.name] ?: 0

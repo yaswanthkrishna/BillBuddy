@@ -16,10 +16,10 @@ class PreferenceHelper(val context: Context) {
         return sharedPreferences
     }
 
-    fun writeIntToPreference(key: String?, value: Int) {
+    fun writeLongToPreference(key: String?, value: Long) {
         sharedPreference()
         val editor = sharedPreferences!!.edit()
-        editor.putInt(key, value)
+        editor.putLong(key, value)
         editor.apply()
     }
 
@@ -47,8 +47,8 @@ class PreferenceHelper(val context: Context) {
         return sharedPreferences!!.getString(key, "").toString()
     }
 
-    fun readIntFromPreference(key: String?): Int {
+    fun readLongFromPreference(key: String?): Long {
         sharedPreference()
-        return sharedPreferences!!.getInt(key, 0)
+        return sharedPreferences!!.getLong(key, 0L)
     }
 }
