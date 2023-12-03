@@ -20,5 +20,8 @@ interface UserDAO {
     @Query("SELECT user_id FROM user_table WHERE name = :userName")
     fun getUserIdByName(userName: String): Long?
 
+    @Query("SELECT user_id FROM user_table WHERE email = :userEmail")
+    fun getUserIdByEmail(userEmail: String): Long?
+
 }
 

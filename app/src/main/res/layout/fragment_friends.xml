@@ -10,37 +10,37 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
 
-    <ListView
-        android:id="@+id/lvDebts"
+    <!-- Replacing ListView with RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFriendsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvOverallAmount2" />
+        android:layout_below="@id/tvOverallAmount2"
+        android:layout_above="@id/searchBar2"/>
 
-    <!-- Assuming you have a search bar -->
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/searchBar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search friends"
-        android:layout_below="@id/tvOverallAmount2" />
+        android:layout_above="@id/btnFilter2" />
 
-    <!-- Assuming you have a filter button -->
+
     <Button
         android:id="@+id/btnFilter2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Filter"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/searchBar2" />
+        android:layout_above="@id/btnAddFriends" />
 
-    <!-- Assuming you have a refresh button -->
     <Button
         android:id="@+id/btnRefresh2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Refresh"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/searchBar2" />
+        android:layout_above="@id/btnAddFriends" />
 
     <Button
         android:id="@+id/btnAddFriends"

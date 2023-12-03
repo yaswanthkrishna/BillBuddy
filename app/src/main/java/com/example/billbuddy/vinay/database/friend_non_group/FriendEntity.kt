@@ -42,5 +42,8 @@ data class FriendEntity(
     val owes: Double,
 
     @ColumnInfo(name = "total_due")
-    val totalDue: Double
+    val totalDue: Double,
+
+    @ColumnInfo(name = "name")
+    val name: String
 )

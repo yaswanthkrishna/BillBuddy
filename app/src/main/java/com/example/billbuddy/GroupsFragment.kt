@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.billbuddy.vinay.database.friend_non_group.AppDatabase
 
 class GroupsFragment : Fragment() {
     // Declare your UI elements here
@@ -25,6 +27,10 @@ class GroupsFragment : Fragment() {
 
     // Assuming you have a ViewModel to fetch and manage data
     private val viewModel: GroupsViewModel by viewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate your layout for this fragment
         return inflater.inflate(R.layout.fragment_groups, container, false)
@@ -47,7 +53,7 @@ class GroupsFragment : Fragment() {
 
         // Set up listeners and bindings for search, filter, and refresh functionalities
         btnAddGroup.setOnClickListener {
-            // Code to navigate to AddFriendActivity
+            //navigateToAddGroup() // You'll need to implement this method
         }
         searchBar.addTextChangedListener {
             // Code to filter the friends list based on the search query

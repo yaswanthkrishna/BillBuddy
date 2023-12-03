@@ -3,13 +3,14 @@ package com.example.billbuddy
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
 
     class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // Initialize your views here, for example:
-        // val nameTextView: TextView = view.findViewById(R.id.nameTextView)
+        val nameTextView: TextView = view.findViewById(R.id.tvFriendName)
+        val nameAmountView: TextView = view.findViewById(R.id.tvAmount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
@@ -18,13 +19,21 @@ class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<F
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
-        val friend = friends[position]
-        // Bind data to the views here, for example:
-        // holder.nameTextView.text = friend.name
+        if (friends.isEmpty()) {
+            holder.nameTextView.text = "No friends available"
+            holder.nameAmountView.visibility = View.GONE
+            // Other UI adjustments for empty state
+        } else {
+            val friend = friends[position]
+            holder.nameTextView.text = friend.name
+            holder.nameAmountView.visibility = View.VISIBLE
+            // Bind other data as needed
+        }
     }
 
-    override fun getItemCount(): Int = friends.size
-
+    override fun getItemCount(): Int {
+        return if (friends.isEmpty()) 1 else friends.size // Return 1 for empty state
+    }
     fun updateList(newFriends: List<Friend>) {
         friends = newFriends
         notifyDataSetChanged()
