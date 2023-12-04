@@ -1,77 +1,120 @@
 package com.example.billbuddy
 
-// Import necessary libraries
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.billbuddy.vinay.database.friend_non_group.AppDatabase
+import com.example.billbuddy.vinay.database.friend_non_group.FriendDAO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FriendsFragment : Fragment() {
-    // Declare your UI elements here
     private lateinit var rvFriends: RecyclerView
     private lateinit var tvOverallAmount: TextView
     private lateinit var btnAddFriend: MaterialButton
-    private lateinit var searchBar: TextInputEditText
+    private lateinit var searchBar: AppCompatEditText
     private lateinit var btnFilter: MaterialButton
     private lateinit var btnRefresh: MaterialButton
+    private var currentFilter = "all"
+    private lateinit var viewModel: FriendsViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val database = AppDatabase.getDatabase(requireContext())
+        val friendDao = database.friendDao()
+        val factory = FriendsViewModelFactory(friendDao, 0L) // Temporary initialization
+        viewModel = ViewModelProvider(this, factory)[FriendsViewModel::class.java]
 
-    // Assuming you have a ViewModel to fetch and manage data
-    private val viewModel: FriendsViewModel by viewModels()
+        val userEmail = arguments?.getString("email") ?: ""
+        getCurrentUserId(userEmail) { userId ->
+            // Update ViewModel here
+            viewModel.updateUserId(userId)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Inflate your layout for this fragment
         return inflater.inflate(R.layout.fragment_friends, container, false)
     }
+    private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val userDAO = AppDatabase.getDatabase(requireContext()).userDao()
+            val userId = userDAO.getUserIdByEmail(email) ?: 0L
+            withContext(Dispatchers.Main) {
+                callback(userId)
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Initialize your UI elements here
         rvFriends = view.findViewById(R.id.rvFriendsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2)
         btnAddFriend = view.findViewById(R.id.btnAddFriends)
-        searchBar = view.findViewById(R.id.searchBar2)
+        searchBar = view.findViewById(R.id.searchBar2) as AppCompatEditText
         btnFilter = view.findViewById(R.id.btnFilter2)
         btnRefresh = view.findViewById(R.id.btnRefresh2)
-
-        // Set up RecyclerView with an adapter and a layout manager
-        rvFriends.adapter = FriendsAdapter(emptyList()) // Pass in the initial empty list or data from the ViewModel
+        rvFriends.adapter = FriendsAdapter(emptyList())
         rvFriends.layoutManager = LinearLayoutManager(requireContext())
-
-        // Set up listeners and bindings for search, filter, and refresh functionalities
         btnAddFriend.setOnClickListener {
-            // Code to navigate to AddFriendActivity
+            navigateToAddFriend()
         }
-        searchBar.addTextChangedListener {
-            // Code to filter the friends list based on the search query
+        searchBar.addTextChangedListener { text ->
+            viewModel.searchFriends(text.toString())
+        }
+        viewModel.friendsList.observe(viewLifecycleOwner) { friendsList ->
+            (rvFriends.adapter as FriendsAdapter).updateList(friendsList)
+            updateOverallAmountDisplay()
         }
         btnFilter.setOnClickListener {
-            // Code to show filter options and apply selected filters
+            showFilterOptions() // Implement this method to show filter options
         }
         btnRefresh.setOnClickListener {
-            // Code to refresh data from the database
+            viewModel.refreshFriendsList()
         }
-
-        // Observe data changes from the ViewModel and update UI accordingly
         viewModel.friendsList.observe(viewLifecycleOwner) { friendsList ->
-            // Update the adapter with the new list
-            (rvFriends.adapter as FriendsAdapter).updateList(friendsList)
-            // Calculate and update the overall amount
-            tvOverallAmount.text = calculateOverallAmount(friendsList)
+            if (friendsList.isEmpty()) {
+                // Handle empty list: You can show a message or hide certain views
+                rvFriends.visibility = View.GONE
+                // Set a message like "No friends available" to a TextView if needed
+            } else {
+                rvFriends.visibility = View.VISIBLE
+                (rvFriends.adapter as FriendsAdapter).updateList(friendsList)
+                updateOverallAmountDisplay()
+            }
         }
     }
-
-    // Method to calculate the overall amount
-    private fun calculateOverallAmount(friendsList: List<Friend>): String {
-        // Implement your logic to calculate the overall amount
-        // Sum up what others owe you and subtract what you owe
-        return "$0.00" // Placeholder
+    private fun updateOverallAmountDisplay() {
+        val overallAmount = viewModel.calculateOverallAmount()
+        tvOverallAmount.text = if (overallAmount == 0.0) "Total Amount: $0.00" else "$${overallAmount.format(2)}"
+        // Change color based on whether the user owes or is owed money
+        val color = if (overallAmount >= 0) R.color.colorGreen else R.color.colorRed
+        tvOverallAmount.setTextColor(ContextCompat.getColor(requireContext(), color))
+    }
+    private fun Double.format(digits: Int) = "%.${digits}f".format(this)
+    private fun navigateToAddFriend() {
+        // findNavController().navigate(R.id.action_friendsFragment_to_addFriendFragment)
+    }
+    private fun showFilterOptions() {
+        if (currentFilter == "all") {
+            viewModel.filterFriendsList("credit")
+            currentFilter = "credit"
+        }
+        else {
+            viewModel.filterFriendsList("all")
+            currentFilter = "all"
+        }
     }
 }

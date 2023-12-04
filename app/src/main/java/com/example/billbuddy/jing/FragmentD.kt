@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.billbuddy.DashboardActivity
 import com.example.billbuddy.databinding.FragmentDBinding
 import com.example.billbuddy.menubartrail.MenuMainActivity
 
@@ -33,7 +34,7 @@ class FragmentD : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.ivClickAnywhere?.setOnClickListener {
-            val intent = Intent(activity, MenuMainActivity::class.java)
+            val intent = Intent(activity, DashboardActivity::class.java)
             startActivity(intent)
         }
     }
