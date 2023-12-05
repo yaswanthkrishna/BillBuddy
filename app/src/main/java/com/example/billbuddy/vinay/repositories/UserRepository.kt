@@ -32,4 +32,8 @@ class UserRepository(val DAO: UserDAO) {
     fun getUserIdByName(userName: String): Long? {
         return DAO.getUserIdByName(userName)
     }
+
+    suspend fun getNameAndPhoneByUserId(userId: Long): UserDAO.NameAndPhone? {
+        return DAO.getNameAndPhoneByUserId(userId)
+    }
 }

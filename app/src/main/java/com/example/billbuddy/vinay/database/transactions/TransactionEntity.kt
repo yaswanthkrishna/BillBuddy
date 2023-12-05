@@ -32,5 +32,8 @@ data class TransactionEntity(
     val description: String?,
 
     @ColumnInfo(name = "Transaction_datetime")
-    val transactionDateTime: String
+    val transactionDateTime: String,
+
+    @ColumnInfo(name = "notes")
+    val notes: String
 )

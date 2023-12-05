@@ -16,4 +16,13 @@ interface FriendDAO {
 
     @Delete
     suspend fun deleteFriend(friendEntity: FriendEntity)
+
+    @Query("UPDATE friends_table SET owe = owe + :amount WHERE user_id = :userId AND friend_user_id = :friendUserId")
+    suspend fun updateOweAmount(userId: Long, friendUserId: Long, amount: Double)
+
+    @Query("UPDATE friends_table SET owes = owes + :amount WHERE user_id = :userId AND friend_user_id = :friendUserId")
+    suspend fun updateOwesAmount(userId: Long, friendUserId: Long, amount: Double)
+
+    @Query("UPDATE friends_table SET total_due = owes - owe WHERE user_id = :userId AND friend_user_id = :friendUserId")
+    suspend fun updateTotalDue(userId: Long, friendUserId: Long)
 }
