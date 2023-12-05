@@ -1,4 +1,4 @@
-package com.example.billbuddy
+package com.example.billbuddy.menubartrail.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

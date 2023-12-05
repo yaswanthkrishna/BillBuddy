@@ -34,6 +34,11 @@ class GroupListViewModel(private val repository: GroupListRepository) : ViewMode
             repository.deleteGroup(groupId)
         }
     }
+    suspend fun getUserIdByName(groupName: String): Long? {
+        return withContext(Dispatchers.IO) {
+            repository.getGroupIdByName(groupName)
+        }
+    }
 
 }
 

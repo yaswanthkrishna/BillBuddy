@@ -192,4 +192,6 @@
     <string name="activity">Activity</string>
     <string name="friends">Friends</string>
     <string name="log_out">Log out</string>
+    <string name="formatted_amount">$%.2f</string>
+    <string name="default_category_name">Home</string>
 </resources>

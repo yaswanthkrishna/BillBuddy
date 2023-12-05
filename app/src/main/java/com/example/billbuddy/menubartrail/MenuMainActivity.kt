@@ -13,11 +13,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.billbuddy.DashboardActivity
 import com.example.billbuddy.R
+import com.example.billbuddy.menubartrail.ui.home.HomeFragment
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinayactivity.AddFriendActivity
+import com.example.billbuddy.vinayactivity.CreateGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -76,7 +77,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, DashboardActivity::class.java)
+                val intent = Intent(this, HomeFragment::class.java)
                 startActivity(intent)
             }
         }
@@ -95,7 +96,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             R.id.action_creategroupe -> {
                 // Handle Create Group click
                 // Example: open a new activity or fragment
-                val intent = Intent(this, AddExpenseActivity::class.java)
+                val intent = Intent(this, CreateGroup::class.java)
                 startActivity(intent)
                 return true
             }

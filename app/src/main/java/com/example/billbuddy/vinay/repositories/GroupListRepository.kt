@@ -29,4 +29,8 @@ class GroupListRepository(private val dao: GroupListDAO) {
         }
     }
 
+    suspend fun getGroupIdByName(groupName: String): Long? {
+        return dao.getGroupIdByName(groupName)
+    }
+
 }

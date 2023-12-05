@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.billbuddy.databinding.ActivityLoginBinding
+import com.example.billbuddy.menubartrail.MenuMainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -70,7 +71,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     // Sign in success, update UI with the signed-in user's information
                     val user = auth.currentUser
                     Log.d("Lakshmi", "signInWithEmail:success")
-                    startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+                    startActivity(Intent(this@LoginActivity, MenuMainActivity::class.java))
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("Lakshmi", "signInWithEmail:failure", task.exception)
