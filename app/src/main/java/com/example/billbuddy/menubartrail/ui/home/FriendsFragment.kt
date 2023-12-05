@@ -1,4 +1,4 @@
-package com.example.billbuddy
+package com.example.billbuddy.menubartrail.ui.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,12 +12,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.billbuddy.R
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
-import com.example.billbuddy.vinay.database.friend_non_group.FriendDAO
 import com.example.billbuddy.vinayactivity.AddFriendActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +47,8 @@ class FriendsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_friends, container, false)
+
+        viewModel.refreshFriendsList()
     }
     private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -105,6 +105,8 @@ class FriendsFragment : Fragment() {
         // Change color based on whether the user owes or is owed money
         val color = if (overallAmount >= 0) R.color.colorGreen else R.color.colorRed
         tvOverallAmount.setTextColor(ContextCompat.getColor(requireContext(), color))
+
+        viewModel.refreshFriendsList()
     }
     private fun Double.format(digits: Int) = "%.${digits}f".format(this)
     private fun navigateToAddFriend() {

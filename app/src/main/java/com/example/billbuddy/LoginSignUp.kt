@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.example.billbuddy.databinding.ActivityLogInAndSignUpBinding
+import com.example.billbuddy.menubartrail.MenuMainActivity
 import com.google.android.gms.common.api.ApiException
 
 class LoginSignUp : AppCompatActivity(), View.OnClickListener {
@@ -100,7 +101,7 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        val intent = Intent(this@LoginSignUp, DashboardActivity::class.java)
+        val intent = Intent(this@LoginSignUp, MenuMainActivity::class.java)
         startActivity(intent)
     }
 

@@ -17,15 +17,15 @@ class WelcomeScreenActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnAddYourApartment.setOnClickListener {
-            startActivity(Intent(this, DashboardActivity::class.java))
+            startActivity(Intent(this, MenuMainActivity::class.java))
         }
 
         binding.btnAddYourGroupTrip.setOnClickListener {
-            startActivity(Intent(this, DashboardActivity::class.java))
+            startActivity(Intent(this, MenuMainActivity::class.java))
         }
 
         binding.btnSkipForNow.setOnClickListener {
-            startActivity(Intent(this, DashboardActivity::class.java))
+            startActivity(Intent(this, MenuMainActivity::class.java))
         }
     }
 }

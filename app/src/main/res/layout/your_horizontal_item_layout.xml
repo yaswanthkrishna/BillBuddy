@@ -1,0 +1,28 @@
+<!-- your_horizontal_item_layout.xml -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llItemContainer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/dp_8"
+    android:background="@drawable/rounded_border"
+    android:layout_margin="3dp">
+
+    <ImageView
+        android:id="@+id/ivCategoryIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_baseline_home_24"
+        android:layout_gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/default_category_name"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>

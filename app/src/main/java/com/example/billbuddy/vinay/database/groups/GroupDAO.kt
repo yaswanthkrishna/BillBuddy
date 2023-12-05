@@ -17,4 +17,6 @@ interface GroupDAO {
 
     @Delete
     fun deleteGroup(groupEntity: GroupEntity)
+
+
 }

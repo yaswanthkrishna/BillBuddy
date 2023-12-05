@@ -20,5 +20,6 @@ interface GroupListDAO {
 
     @Query("DELETE FROM GroupList_table WHERE groupId = :groupId")
     suspend fun deleteGroup(groupId: Long)
-
+    @Query("SELECT groupId FROM grouplist_table WHERE group_name = :groupName")
+    suspend fun getGroupIdByName(groupName: String):Long?
 }

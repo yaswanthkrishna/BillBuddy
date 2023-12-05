@@ -1,9 +1,10 @@
-package com.example.billbuddy
+package com.example.billbuddy.menubartrail.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.example.billbuddy.menubartrail.ui.home.Friend
 import com.example.billbuddy.vinay.database.friend_non_group.FriendDAO
 import com.example.billbuddy.vinay.database.users.UserDAO
 import kotlinx.coroutines.Dispatchers

@@ -9,25 +9,30 @@ import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
 import com.example.billbuddy.vinay.database.friend_non_group.FriendEntity
+import com.example.billbuddy.vinay.database.groups.GroupListEntity
+import com.example.billbuddy.vinay.database.groups.GroupMemberEntity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinay.database.users.UserEntity
 import com.example.billbuddy.vinay.viewmodels.FriendViewModel
-import com.example.billbuddy.vinay.viewmodels.FriendViewModelFactory
+import com.example.billbuddy.vinay.viewmodels.GroupListViewModel
+import com.example.billbuddy.vinay.viewmodels.GroupListViewModelFactory
+import com.example.billbuddy.vinay.viewmodels.GroupMemberViewModel
+import com.example.billbuddy.vinay.viewmodels.GroupMemberViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.UserViewModel
 import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
 import com.example.billbuddy.vinay.views.SplitwiseApplication
@@ -35,7 +40,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AddFriendActivity : AppCompatActivity() {
+class AddGroupMembers : Fragment() {
 
     private val CONTACTS_PERMISSION_REQUEST = 1
     private lateinit var recyclerView: RecyclerView
@@ -46,26 +51,42 @@ class AddFriendActivity : AppCompatActivity() {
     private var allContacts: List<Contact> = emptyList()
     private var selectedContacts: MutableList<Contact> = mutableListOf()
     private lateinit var friendViewModel: FriendViewModel
-    private lateinit var userViewModel: UserViewModel
     private var usersList = mutableListOf<UserEntity>()
     private var friendList = mutableListOf<FriendEntity>()
-    private val preferenceHelper by lazy { PreferenceHelper(this) }
+    private val preferenceHelper by lazy { PreferenceHelper(requireContext()) }
+    private lateinit var groupListViewModel: GroupListViewModel
+    private lateinit var groupMemberViewModel: GroupMemberViewModel
+    private lateinit var userViewModel: UserViewModel
+    private var groupName: String? = null
+    private var groupCategory: String? =null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_friend)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_add_group_members, container, false)
 
-        recyclerView = findViewById(R.id.rvContactAddTemp)
-        selectedRecyclerView = findViewById(R.id.rvSelectedContacts)
-        etSearch = findViewById(R.id.etSearch)
+        groupName = arguments?.getString("groupName")
+        groupCategory = arguments?.getString("groupCategory")
+
+        recyclerView = view.findViewById(R.id.rvContactAddTemp)
+        selectedRecyclerView = view.findViewById(R.id.rvSelectedContacts)
+        etSearch = view.findViewById(R.id.etSearch)
         selectedRecyclerView.visibility = View.GONE
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        val toolbar: Toolbar = view.findViewById(R.id.toolbar)
+
+        // Set the Toolbar as the action bar for the activity
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
         // Enable the Up button in the toolbar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
 
         createDatabase()
         getUsersList()
@@ -77,15 +98,19 @@ class AddFriendActivity : AppCompatActivity() {
             requestContactsPermission()
         }
 
-        val fabToggle: FloatingActionButton = findViewById(R.id.fabToggle)
+        val fabToggle: FloatingActionButton = view.findViewById(R.id.fabToggle)
         fabToggle.setOnClickListener {
             // Handle FloatingActionButton click
             lifecycleScope.launch {
-                addSelectedContactsToDatabase(selectedContacts)
-                showToast("Friends added successfully!")
-                finish()
+                addSelectedContactsToGroupDatabase(selectedContacts)
+                showToast("Group Created successfully!")
+
+                // Close the activity along with the fragment
+                requireActivity().finish()
             }
         }
+
+        return view
     }
 
     private fun onContactsPermissionGranted() {
@@ -104,18 +129,17 @@ class AddFriendActivity : AppCompatActivity() {
 
     private fun checkContactsPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-            this,
+            requireContext(),
             android.Manifest.permission.READ_CONTACTS
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestContactsPermission() {
         ActivityCompat.requestPermissions(
-            this,
+            requireActivity(),
             arrayOf(android.Manifest.permission.READ_CONTACTS),
             CONTACTS_PERMISSION_REQUEST
         )
-
     }
 
     override fun onRequestPermissionsResult(
@@ -136,20 +160,19 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
-
     private fun loadContacts() {
         // Get all contacts initially
         allContacts = getPhoneContacts()
 
         // Set up RecyclerView for all contacts
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
         contactsAdapter = ContactsAdapter(allContacts, ::onContactSelected)
         recyclerView.adapter = contactsAdapter
 
         // Set up RecyclerView for selected contacts
         val selectedLayoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         selectedRecyclerView.layoutManager = selectedLayoutManager
         selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
         selectedRecyclerView.adapter = selectedContactsAdapter
@@ -158,7 +181,7 @@ class AddFriendActivity : AppCompatActivity() {
     @SuppressLint("Range")
     private fun getPhoneContacts(): List<Contact> {
         val contacts = mutableListOf<Contact>()
-        val contentResolver: ContentResolver = contentResolver
+        val contentResolver: ContentResolver = requireActivity().contentResolver
         val cursor: Cursor? = contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
@@ -220,15 +243,15 @@ class AddFriendActivity : AppCompatActivity() {
     }
 
     private fun updateSelectedContactsVisibility() {
-        val recyclerView = findViewById<RecyclerView>(R.id.rvSelectedContacts)
-        recyclerView.visibility = if (selectedContacts.isNotEmpty()) View.VISIBLE else View.GONE
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.rvSelectedContacts)
+        recyclerView?.visibility = if (selectedContacts.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 // Handle the back button click
-                onBackPressed()
+                requireActivity().onBackPressed()
                 return true
             }
             // Handle other menu items if needed
@@ -236,10 +259,16 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun addSelectedContactsToDatabase(selectedContacts: MutableList<Contact>) {
+    private suspend fun addSelectedContactsToGroupDatabase(selectedContacts: MutableList<Contact>) {
         // Get the current user
         val currentUser =
             usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+
+        val groupEntity = GroupListEntity(
+            groupName = groupName?:"",
+            groupCategory = groupCategory?:""
+        )
+        groupListViewModel.addGroup(groupEntity)
 
         for (contact in selectedContacts) {
             // Check if the contact already exists in the users_table
@@ -262,71 +291,61 @@ class AddFriendActivity : AppCompatActivity() {
 
             if (currentUser != null) {
                 delay(100)
+                val existingGroup = groupName?.let { groupListViewModel.getUserIdByName(groupName!!) }
                 val existingUser = userViewModel.getUserIdByName(contact.name)
-                Log.d("Friends", "Current:$currentUser")
-                Log.d("Friends", "Existing:$existingUser")
-                if (existingUser != null) {
-                    getFriendList(currentUser.user_id) { fetchedFriendList ->
-                        Log.d("FriendsList", "$fetchedFriendList")
-                        val existingFriend =
-                            fetchedFriendList.firstOrNull { it.friendUserId == existingUser }
+                Log.d("Groups", "Current:$currentUser")
+                Log.d("Groups", "Existing:$existingUser")
+                if (existingGroup != null) {
 
-                        if (existingFriend == null) {
-                            // Contact is not a friend, so add them as a friend of the current user
-                            val friendEntity = FriendEntity(
-                                userId = currentUser.user_id,
-                                friendUserId = existingUser,
-                                owe = 0.0,
-                                owes = 0.0,
-                                totalDue = 0.0,
-                                name = contact.name
-                            )
-                            // Insert the new friend into the friends_table
-                            friendViewModel.addFriend(friendEntity)
-                        }
+                            val groupMemberEntity =
+                                existingUser?.let {
+                                    GroupMemberEntity(
+                                        groupId = existingGroup,
+                                        userId = it,
+                                        userOwe = 0.0,
+                                        groupOwes = 0.0,
+                                        totalDue = 0.0
+                                    )
+                                }
+                            // Insert the groupMember into the groupList_table
+                    if (groupMemberEntity != null) {
+                        groupMemberViewModel.addGroupMember(groupMemberEntity)
                     }
                 }
             }
         }
     }
 
-    private fun createDatabase() {
-        val appClass = application as SplitwiseApplication
-
-        val friendRepository = appClass.friendRepository
-        val friendViewModelFactory = FriendViewModelFactory(friendRepository)
-
-        val userRepository = appClass.userRepository
-        val userViewModelFactory = UserViewModelFactory(userRepository)
-
-        userViewModel = ViewModelProvider(this, userViewModelFactory)
-            .get(UserViewModel::class.java)
-
-        friendViewModel = ViewModelProvider(this, friendViewModelFactory)
-            .get(FriendViewModel::class.java)
-    }
-
     private fun getUsersList() {
-        userViewModel.getUserList().observe(this, Observer {
+        userViewModel.getUserList().observe(viewLifecycleOwner) { users ->
             usersList.clear()
-            usersList.addAll(it)
-        })
-    }
-
-    private suspend fun getFriendList(currentUserId: Long, callback: (List<FriendEntity>) -> Unit) {
-        friendViewModel.getFriendsList(currentUserId).observe(this) { friends ->
-            friendList.clear()
-            friends?.let {
-                friendList.addAll(it)
-                callback(friendList)
-            }
+            usersList.addAll(users)
         }
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-}
+    private fun createDatabase() {
+        val appClass = requireActivity().application as SplitwiseApplication
 
-data class Contact(val name: String, val phoneNumber: String)
+        val userRepository = appClass.userRepository
+        val userViewModelFactory = UserViewModelFactory(userRepository)
+
+        val groupListRepository = appClass.groupListRepository
+        val groupListViewModelFactory = GroupListViewModelFactory(groupListRepository)
+
+        val groupMemberRepository = appClass.groupMemberRepository
+        val groupMemberViewModelFactory = GroupMemberViewModelFactory(groupMemberRepository)
+
+        userViewModel = ViewModelProvider(this, userViewModelFactory)
+            .get(UserViewModel::class.java)
+
+        groupListViewModel = ViewModelProvider(this, groupListViewModelFactory)
+            .get(GroupListViewModel::class.java)
+
+        groupMemberViewModel = ViewModelProvider(this, groupMemberViewModelFactory)
+            .get(GroupMemberViewModel::class.java)
+    }
+}
