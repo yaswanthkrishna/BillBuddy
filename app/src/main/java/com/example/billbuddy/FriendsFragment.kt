@@ -1,5 +1,6 @@
 package com.example.billbuddy
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.billbuddy.vinay.database.friend_non_group.AppDatabase
+import com.example.billbuddy.vinay.database.SplitwiseDatabase
 import com.example.billbuddy.vinay.database.friend_non_group.FriendDAO
+import com.example.billbuddy.vinayactivity.AddFriendActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +35,8 @@ class FriendsFragment : Fragment() {
     private lateinit var viewModel: FriendsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val database = AppDatabase.getDatabase(requireContext())
-        val friendDao = database.friendDao()
+        val database = SplitwiseDatabase.getDatabase(requireContext())
+        val friendDao = database.getMyFriendEntries()
         val factory = FriendsViewModelFactory(friendDao, 0L) // Temporary initialization
         viewModel = ViewModelProvider(this, factory)[FriendsViewModel::class.java]
 
@@ -49,7 +52,7 @@ class FriendsFragment : Fragment() {
     }
     private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            val userDAO = AppDatabase.getDatabase(requireContext()).userDao()
+            val userDAO = SplitwiseDatabase.getDatabase(requireContext()).getMyUserEntries()
             val userId = userDAO.getUserIdByEmail(email) ?: 0L
             withContext(Dispatchers.Main) {
                 callback(userId)
@@ -105,8 +108,10 @@ class FriendsFragment : Fragment() {
     }
     private fun Double.format(digits: Int) = "%.${digits}f".format(this)
     private fun navigateToAddFriend() {
-        // findNavController().navigate(R.id.action_friendsFragment_to_addFriendFragment)
+        val intent = Intent(requireContext(), AddFriendActivity::class.java)
+        startActivity(intent)
     }
+
     private fun showFilterOptions() {
         if (currentFilter == "all") {
             viewModel.filterFriendsList("credit")

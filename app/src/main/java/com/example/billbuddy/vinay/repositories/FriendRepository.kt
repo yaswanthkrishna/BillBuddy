@@ -29,4 +29,22 @@ class FriendRepository(private val dao: FriendDAO) {
             dao.deleteFriend(friendEntity)
         }
     }
+
+    suspend fun updateOweAmount(userId: Long, friendUserId: Long, amount: Double) {
+        withContext(Dispatchers.IO) {
+            dao.updateOweAmount(userId, friendUserId, amount)
+        }
+    }
+
+    suspend fun updateOwesAmount(userId: Long, friendUserId: Long, amount: Double) {
+        withContext(Dispatchers.IO) {
+            dao.updateOwesAmount(userId, friendUserId, amount)
+        }
+    }
+
+    suspend fun updateTotalDue(userId: Long, friendUserId: Long) {
+        withContext(Dispatchers.IO) {
+            dao.updateTotalDue(userId, friendUserId)
+        }
+    }
 }

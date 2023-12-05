@@ -35,6 +35,24 @@ class FriendViewModel(private val repository: FriendRepository) : ViewModel() {
             repository.deleteFriend(friendEntity)
         }
     }
+
+    fun updateOweAmount(userId: Long, friendUserId: Long, amount: Double) {
+        viewModelScope.launch {
+            repository.updateOweAmount(userId, friendUserId, amount)
+        }
+    }
+
+    fun updateOwesAmount(userId: Long, friendUserId: Long, amount: Double) {
+        viewModelScope.launch {
+            repository.updateOwesAmount(userId, friendUserId, amount)
+        }
+    }
+
+    fun updateTotalDue(userId: Long, friendUserId: Long) {
+        viewModelScope.launch {
+            repository.updateTotalDue(userId, friendUserId)
+        }
+    }
 }
 
 class FriendViewModelFactory(private val repository: FriendRepository) : ViewModelProvider.Factory {

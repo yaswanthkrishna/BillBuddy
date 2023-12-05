@@ -2,31 +2,41 @@ package com.example.billbuddy.vinayactivity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.ListView
+import android.widget.SimpleAdapter
 import android.widget.SimpleCursorAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
 import com.example.billbuddy.R
 import com.example.billbuddy.databinding.ActivityAddExpenseBinding
 import com.example.billbuddy.jing.PercentageSplitFragment
@@ -34,16 +44,20 @@ import com.example.billbuddy.jing.NameSelectionFragment
 import com.example.billbuddy.jing.OnNameSelectedListener
 import com.example.billbuddy.jing.UnequallySplitFragment
 import com.example.billbuddy.menubartrail.MenuMainActivity
-import com.example.billbuddy.vinay.database.SplitwiseDatabase
+import com.example.billbuddy.vinay.database.friend_non_group.FriendEntity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinay.database.transactions.NonGroupTransactionMemberEntity
-import com.example.billbuddy.vinay.database.transactions.TransactionDAO
 import com.example.billbuddy.vinay.database.transactions.TransactionEntity
 import com.example.billbuddy.vinay.database.users.UserEntity
 import com.example.billbuddy.vinay.recyclerviews.ContactCommunicator
 import com.example.billbuddy.vinay.recyclerviews.ContactTempAddAdapter
 import com.example.billbuddy.vinay.recyclerviews.ContactTempModel
+import com.example.billbuddy.vinay.repositories.FriendRepository
 import com.example.billbuddy.vinay.repositories.TransactionRepository
+import com.example.billbuddy.vinay.repositories.UserRepository
+import com.example.billbuddy.vinay.viewmodels.FriendTransactionViewModelFactory
+import com.example.billbuddy.vinay.viewmodels.FriendViewModel
+import com.example.billbuddy.vinay.viewmodels.FriendViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.NonGroupTransactionMemberViewModel
 import com.example.billbuddy.vinay.viewmodels.NonGroupTransactionMemberViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.TransactionViewModel
@@ -51,18 +65,26 @@ import com.example.billbuddy.vinay.viewmodels.TransactionViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.UserViewModel
 import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
 import com.example.billbuddy.vinay.views.SplitwiseApplication
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelectedListener, UnequallySplitFragment.OnAmountsSavedListener,
-    PercentageSplitFragment.OnPercentagesSavedListener{
+    PercentageSplitFragment.OnPercentagesSavedListener,NotesFragment.OnNoteEnteredListener{
 
     private lateinit var binding: ActivityAddExpenseBinding
-    private val CONTACT_PERMISSION_REQUEST_CODE = 1
+    private val REQUEST_CODE_CAMERA_PERMISSION = 1
     private lateinit var cursor: Cursor
     private var contactList = mutableListOf<ContactTempModel>()
+    private var friendsAddedList = mutableListOf<ContactTempModel>()
     private var usersList = mutableListOf<UserEntity>()
     private lateinit var contactAdapter: ContactTempAddAdapter
     private lateinit var to: IntArray
@@ -73,6 +95,21 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     private var amounts: Map<String, Double> = emptyMap()
     private var percentage: Map<String, Int> = emptyMap()
     private lateinit var transactionRepository: TransactionRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var friendRepository: FriendRepository
+    private lateinit var friendViewModel: FriendViewModel
+    private var notes : String? = null
+    private var image_path : String? = null
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                val imageBitmap = data?.extras?.get("data") as Bitmap
+                val imageUri = saveImageToStorage(imageBitmap)
+                saveImagePathToDatabase(imageUri.toString())
+            }
+        }
 
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -121,14 +158,11 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         binding.tvBackArrow.setOnClickListener {
             finish()
         }
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.WRITE_CONTACTS
-            ),
-            CONTACT_PERMISSION_REQUEST_CODE
-        )
+
+        lifecycleScope.launch {
+            fetchFriends()
+        }
+
         binding.ibClose.setOnClickListener {
             binding.lvContacts.visibility = View.GONE
             binding.ibClose.visibility = View.GONE
@@ -147,29 +181,27 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         }
 
         binding.lvContacts.setOnItemClickListener { parent, view, position, id ->
-            var cTM =
-                ContactTempModel(
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
-                    cursor.getString(cursor.getColumnIndex("DISPLAY_NAME"))
-                )
-            var flag = true
-            for (i in contactList) {
-                if (i.name == cTM.name && i.number == cTM.number) {
-                    Toast.makeText(this, "Already Added", Toast.LENGTH_SHORT).show()
-                    flag = false
-                    break;
+            // Assuming you have a list of ContactTempModel called contactList
+            if (position < friendsAddedList.size) {
+                val clickedContact = friendsAddedList[position]
+
+                // Check if the contact is already added
+                var flag = true
+                for (i in contactList) {
+                    if (i.name == clickedContact.name && i.number == clickedContact.number) {
+                        Toast.makeText(this, "Already Added", Toast.LENGTH_SHORT).show()
+                        flag = false
+                        break
+                    }
                 }
-            }
-            if (flag) {
-                contactList.add(cTM)
-                contactAdapter =
-                    ContactTempAddAdapter(
-                        contactList,
-                        this
-                    )
-                binding.rvContactAddTemp.layoutManager =
-                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-                binding.rvContactAddTemp.adapter = contactAdapter
+
+                // If not added, add it to the contactList and update the adapter
+                if (flag) {
+                    contactList.add(clickedContact)
+                    contactAdapter = ContactTempAddAdapter(contactList, this)
+                    binding.rvContactAddTemp.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                    binding.rvContactAddTemp.adapter = contactAdapter
+                }
             }
         }
         binding.addAllUsers.setOnClickListener {
@@ -205,16 +237,39 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             val names = contactAdapter.getNamesList()
             showNameSelectionFragment(names)
         }
+
+        val ivNotes = findViewById<ImageView>(R.id.ivNotes)
+        ivNotes.setOnClickListener {
+            // Show the NotesFragment when the ivNotes is clicked
+            showNotesFragment()
+        }
+
+        val cameraPermission = Manifest.permission.CAMERA
+        val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+
+
+        val ivCamera: ImageView = findViewById(R.id.ivCamera)
+        ivCamera.setOnClickListener {
+
+            if (ContextCompat.checkSelfPermission(this, cameraPermission) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, storagePermission) == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                // Request permissions
+                ActivityCompat.requestPermissions(this, arrayOf(cameraPermission, storagePermission), REQUEST_CODE_CAMERA_PERMISSION)
+            }
+        }
     }
 
     private fun getCurrentUser(): UserEntity? {
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
 
         if (currentUser != null) {
             Log.d("AddExpenseActivity", "Current user fetched: ${currentUser.name}, ${currentUser.phone}")
         } else {
-            Log.d("AddExpenseActivity", "Current user not found for ID: $preferenceHelper.readIntFromPreference(SplitwiseApplication.PREF_USER_ID)")
+            Log.d("AddExpenseActivity", "Current user not found for ID: $preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID)")
         }
 
         return currentUser
@@ -227,7 +282,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleEquallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Add currentUser to contactList
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
         currentUser?.let {
             val currentUserModel = ContactTempModel(it.phone, it.name ?: "")
             contactList.add(currentUserModel)
@@ -259,10 +314,11 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             paidByUserId = userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType = binding.splittype.selectedItem.toString(),
             groupFlag = false,
-            receiptImage = null,
+            receiptImage = image_path ?: "",
             comments = null,
             description = binding.tvDescription.text.toString(),
-            transactionDateTime = dtf.format(LocalDateTime.now())
+            transactionDateTime = dtf.format(LocalDateTime.now()),
+            notes = notes ?: ""
         )
 
         // Insert the TransactionEntity
@@ -287,10 +343,26 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
             // Insert the NonGroupTransactionMemberEntity
             nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
+
+            if (currentUser != null) {
+                val frienduserid = userViewModel.getUserIdByName(i.name ?: "") ?: 0L
+                if(payerName==currentUser.name){
+                    friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amountOwe)
+                    friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                }
+                else{
+                    if(i.name==payerName){
+                        Log.d("currentfriends","inner:False $amountOwes")
+                        Log.d("currentfriends","userid:$currentUser.user_id , frienduserid: $frienduserid")
+                        friendViewModel.updateOweAmount(currentUser.user_id, frienduserid, eachShare)
+                        friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                    }
+                }
+            }
         }
 
         currentUser?.let {
-            if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
+            if (payerName==currentUser.name) {
                 // If the payer is the current user, update the owe amount
                 it.owes = (it.owes.toDouble() + (totalAmount - eachShare)).toString()
             } else {
@@ -310,6 +382,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         val intent2 = Intent(this, MenuMainActivity::class.java)
         startActivity(intent2)
         finish()
+
     }
 
 
@@ -317,9 +390,11 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleUnequallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
 
+        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+
         val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
             // If Paidby is "You," use the current user's name
-            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
             currentUser?.name ?: ""
         } else {
             // Otherwise, use the name in the TextView
@@ -338,16 +413,24 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType=binding.splittype.selectedItem.toString(),
             groupFlag=false,
-            receiptImage=null,
+            receiptImage = image_path ?: "",
             comments=null,
             description=binding.tvDescription.text.toString(),
-            transactionDateTime=dtf.format(LocalDateTime.now())
+            transactionDateTime=dtf.format(LocalDateTime.now()),
+            notes = notes ?: ""
         )
         transactionViewModel.addTransaction(transactionEntity)
 
-
+        var currentuserowe = 0.0
         for ((name, amount) in amounts) {
-            val phoneNumber = contactList.firstOrNull { it.name == name }?.number
+
+
+            if (currentUser != null) {
+                if(name==currentUser.name){
+                    currentuserowe = amount
+                    Log.d("currentuserowe",":$currentuserowe")
+                }
+            }
 
             var amountOwes = 0.0
             var amountOwe = 0.0
@@ -367,9 +450,25 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             // Insert the NonGroupTransactionMemberEntity
             nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
 
+            if (currentUser != null) {
+                val frienduserid = userViewModel.getUserIdByName(name ?: "") ?: 0L
+
+                if(payerName==currentUser.name){
+                    friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amount)
+                    friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                }
+            }
+
         }
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        if (currentUser != null) {
+            if(payerName!=currentUser.name){
+                val payerid = userViewModel.getUserIdByName(payerName ?: "") ?: 0L
+                friendViewModel.updateOweAmount(currentUser.user_id, payerid, currentuserowe)
+                friendViewModel.updateTotalDue(currentUser.user_id, payerid)
+            }
+        }
+
         currentUser?.let {
             if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
                 // If the payer is the current user, update the owe amount
@@ -398,11 +497,13 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handlePercentageSplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Get the list of selected persons and their assigned percentages
+        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+
         val percentages = percentage
 
         val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
             // If Paidby is "You," use the current user's name
-            val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
             currentUser?.name ?: ""
         } else {
             // Otherwise, use the name in the TextView
@@ -421,22 +522,30 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType=binding.splittype.selectedItem.toString(),
             groupFlag=false,
-            receiptImage=null,
+            receiptImage = image_path ?: "",
             comments=null,
             description=binding.tvDescription.text.toString(),
-            transactionDateTime=dtf.format(LocalDateTime.now())
+            transactionDateTime=dtf.format(LocalDateTime.now()),
+            notes = notes ?: ""
         )
         transactionViewModel.addTransaction(transactionEntity)
 
+        var currentuserowe = 0.0
         for (person in contactList) {
             val name = person.name ?: ""
-            val phoneNumber = person.number ?: ""
 
             // Get the percentage assigned to the current person
             val personPercentage = percentages[name] ?: 0
 
             // Calculate the amount for the current person based on the percentage
             val amount = (totalAmount * personPercentage) / 100
+
+            if (currentUser != null) {
+                if(name==currentUser.name){
+                    currentuserowe = amount
+                    Log.d("currentuserowe",":$currentuserowe")
+                }
+            }
 
             var amountOwes = 0.0
             var amountOwe = 0.0
@@ -456,11 +565,27 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             // Insert the NonGroupTransactionMemberEntity
             nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
 
+            if (currentUser != null) {
+                val frienduserid = userViewModel.getUserIdByName(name ?: "") ?: 0L
+
+                if(payerName==currentUser.name){
+                    friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amount)
+                    friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                }
+            }
         }
 
-        val currentUser = usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        if (currentUser != null) {
+            if(payerName!=currentUser.name){
+                val payerid = userViewModel.getUserIdByName(payerName ?: "") ?: 0L
+                friendViewModel.updateOweAmount(currentUser.user_id, payerid, currentuserowe)
+                friendViewModel.updateTotalDue(currentUser.user_id, payerid)
+            }
+        }
+
+
+        Log.d("percentageSplit","CurrentUser:$currentUser")
         currentUser?.let {
-            val totalPercentage = percentage.values.sum()
             val currentUserPercentage = percentage[it.name] ?: 0
 
             // Calculate the amount for the current user based on the percentage
@@ -509,56 +634,36 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     }
 
 
+    private suspend fun fetchFriends() {
+        // Assume you have a function to get friends from your database
+        delay(50)
+        val friendsList = getFriendsFromDatabase()
+        Log.d("fetchFriends", "$friendsList")
 
-    private fun fetchContacts() {
+        // Convert the friendsList to ContactTempModel
+        friendsAddedList.clear()
+        for (friend in friendsList) {
+            val nameAndPhone = userRepository.getNameAndPhoneByUserId(friend.friendUserId)
+            Log.d("fetchFriends", "nameAndPhone: $nameAndPhone")
+            val contactTempModel = ContactTempModel(nameAndPhone?.phone, nameAndPhone?.name)
+            friendsAddedList.add(contactTempModel)
+        }
 
-        val cursor: Cursor? = contentResolver.query(
-            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-            null,
-            null,
-            null,
-            null
+        // Create a SimpleAdapter for the ListView
+        val adapter = SimpleAdapter(
+            this,
+            friendsAddedList.map { mapOf("name" to it.name, "phone" to it.number) },
+            android.R.layout.simple_list_item_2,
+            arrayOf("name", "phone"),
+            intArrayOf(android.R.id.text1, android.R.id.text2)
         )
-        this.cursor = cursor!!
-        startManagingCursor(cursor)
 
-        val from = arrayOf(
-            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-            ContactsContract.CommonDataKinds.Phone.NUMBER,
-            ContactsContract.CommonDataKinds.Phone._ID
-        )
-
-        to = IntArray(2)
-        to[0] = android.R.id.text1
-        to[1] = android.R.id.text2
-
-        val simpleCursorAdapter =
-            SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, from, to)
-
-        binding.lvContacts.adapter = simpleCursorAdapter
-        binding.lvContacts.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            CONTACT_PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fetchContacts()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Contact Permission Denied",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
+        // Set the adapter to the ListView
+        withContext(Dispatchers.Main) {
+            binding.lvContacts.adapter = adapter
         }
     }
+
 
     private fun createDatabase() {
         val appClass = application as SplitwiseApplication
@@ -566,11 +671,14 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         transactionRepository = appClass.transactionRepository
         val transactionViewModelFactory = TransactionViewModelFactory(transactionRepository)
 
-        val userRepository = appClass.userRepository
+        userRepository = appClass.userRepository
         val userViewModelFactory = UserViewModelFactory(userRepository)
 
         val nonGroupTransactionMemberRepository = appClass.nongroupTransactionMemberRepository
         val nonGroupTransactionMemberViewModelFactory = NonGroupTransactionMemberViewModelFactory(nonGroupTransactionMemberRepository)
+
+        val friendRepository = appClass.friendRepository
+        val friendViewModelFactory = FriendViewModelFactory(friendRepository)
 
         userViewModel = ViewModelProvider(this, userViewModelFactory)
             .get(UserViewModel::class.java)
@@ -580,6 +688,32 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
         nonGroupTransactionMemberViewModel = ViewModelProvider(this, nonGroupTransactionMemberViewModelFactory)
             .get(NonGroupTransactionMemberViewModel::class.java)
+
+        friendViewModel = ViewModelProvider(this, friendViewModelFactory)
+            .get(FriendViewModel::class.java)
+    }
+
+    private suspend fun getFriendsFromDatabase(): List<FriendEntity> = suspendCoroutine { continuation ->
+
+        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+        Log.d("FetchFriends", "CurrentUser: $currentUser")
+
+        val friendsLiveData = currentUser?.let { friendViewModel.getFriendsList(it.user_id) }
+        Log.d("FetchFriends", "FriendListData: $friendsLiveData")
+
+        friendsLiveData?.observeOnce(this) { friendsList ->
+            Log.d("FetchFriends", "FriendList: $friendsList")
+            continuation.resume(friendsList ?: emptyList())
+        }
+    }
+
+    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: Observer<T>) {
+        observe(owner, object : Observer<T> {
+            override fun onChanged(value: T) {
+                observer.onChanged(value)
+                removeObserver(this)
+            }
+        })
     }
 
     override fun onContactDelete(tempModel: ContactTempModel) {
@@ -625,6 +759,79 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
         Log.d("onPercentagesSaved","$percentages")
         this.percentage=percentages
     }
+    private fun showNotesFragment() {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
 
+        val notesFragment = NotesFragment()
+        notesFragment.show(fragmentTransaction, NotesFragment::class.java.simpleName)
+    }
+
+    // Implement the interface method to receive notes from the NotesFragment
+    override fun onNoteEntered(note: String) {
+        // Handle the entered notes, for example, store them in the database
+        Log.d("AddExpenseActivity", "Entered Notes: $note")
+        notes=note
+
+        // Dismiss the fragment after handling the notes
+        val notesFragment = supportFragmentManager.findFragmentByTag(NotesFragment::class.java.simpleName)
+        if (notesFragment != null) {
+            (notesFragment as DialogFragment).dismiss()
+        }
+    }
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            takePictureLauncher.launch(takePictureIntent)
+        }
+    }
+
+    private fun saveImageToStorage(imageBitmap: Bitmap): Uri {
+        val imageFileName = "JPEG_${System.currentTimeMillis()}.jpg"
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+
+        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        try {
+            contentResolver.openOutputStream(imageUri!!)?.use {
+                it.write(bitmapToByteArray(imageBitmap))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return imageUri!!
+    }
+
+    private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return stream.toByteArray()
+    }
+
+    private fun saveImagePathToDatabase(imagePath: String) {
+        Log.d("Image Path","$imagePath")
+        // Insert the image path into the database
+        // Use your database helper or ORM here
+        // Example: dbHelper.insertImagePath(imagePath)
+        image_path=imagePath
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, launch the camera intent
+                dispatchTakePictureIntent()
+            } else {
+                // Permission denied, handle accordingly (e.g., show a message or request again)
+            }
+        }
+    }
 
 }

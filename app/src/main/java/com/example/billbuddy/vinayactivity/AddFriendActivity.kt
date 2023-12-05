@@ -73,20 +73,10 @@ class AddFriendActivity : AppCompatActivity() {
 
         // Check and request contacts permission if needed
         if (checkContactsPermission()) {
-            loadContacts()
+            onContactsPermissionGranted()
         } else {
             requestContactsPermission()
         }
-
-        etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterContacts(s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
 
         val fabToggle: FloatingActionButton = findViewById(R.id.fabToggle)
         fabToggle.setOnClickListener {
@@ -97,6 +87,20 @@ class AddFriendActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun onContactsPermissionGranted() {
+        loadContacts()
+
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterContacts(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     private fun checkContactsPermission(): Boolean {
@@ -112,7 +116,27 @@ class AddFriendActivity : AppCompatActivity() {
             arrayOf(android.Manifest.permission.READ_CONTACTS),
             CONTACTS_PERMISSION_REQUEST
         )
+
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == CONTACTS_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, load contacts
+                onContactsPermissionGranted()
+            } else {
+                // Permission denied, handle accordingly
+                showToast("Contacts permission denied.")
+            }
+        }
+    }
+
 
     private fun loadContacts() {
         // Get all contacts initially
@@ -185,7 +209,6 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
-
     private fun onRemoveContact(contact: Contact) {
         // Remove the selected contact from the list
         selectedContacts.remove(contact)
@@ -256,7 +279,8 @@ class AddFriendActivity : AppCompatActivity() {
                                 friendUserId = existingUser,
                                 owe = 0.0,
                                 owes = 0.0,
-                                totalDue = 0.0
+                                totalDue = 0.0,
+                                name = contact.name
                             )
                             // Insert the new friend into the friends_table
                             friendViewModel.addFriend(friendEntity)
