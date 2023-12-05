@@ -50,6 +50,9 @@
         <activity android:name=".menubartrail.MenuMainActivity"
             android:exported="false" />
         <activity
+            android:name=".jing.RecentActivity"
+            android:exported="false"/>
+        <activity
             android:name=".LoginSignUp"
             android:exported="true"
             android:label="@string/app_name"
