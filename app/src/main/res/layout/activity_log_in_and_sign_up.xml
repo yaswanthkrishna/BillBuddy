@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginSignUp"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/rlParent"
         android:layout_width="match_parent"
@@ -16,40 +16,45 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_marginTop="@dimen/dp_50"
-            android:layout_width="@dimen/dp_300"
+            android:layout_width="@dimen/dp_200"
+            android:layout_height="@dimen/dp_200"
             android:layout_centerHorizontal="true"
-            android:layout_height="@dimen/dp_300"
-            android:layout_marginLeft="@dimen/dp_30"
-            android:src="@drawable/billbuddy_logo" />
+            android:layout_marginTop="@dimen/dp_50"
+            android:src="@drawable/billbuddy_logo_nobg" />
+
         <Button
             android:id="@+id/btnlogin"
-            android:layout_marginTop="100dp"
-            android:layout_marginLeft="@dimen/dp_30"
-            android:layout_marginRight="30dp"
-            android:layout_below="@id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/logo"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
             android:text="@string/login"
-            />
+            android:backgroundTint="@color/green_2"/>
+
         <Button
             android:id="@+id/btnsignup"
-            android:layout_marginTop="10dp"
-            android:layout_below="@id/btnlogin"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/signup"
-            />
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btnsignwithgoogle"
+            android:layout_below="@id/btnlogin"
             android:layout_marginTop="@dimen/dp_10"
-            android:layout_below="@id/btnsignup"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:text="@string/signup"
+            android:backgroundTint="@color/green_2"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnsignwithgoogle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnsignup"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:background="@drawable/rounded_button_background"
+            android:text="Sign in with Google" />
+
 
     </RelativeLayout>
 

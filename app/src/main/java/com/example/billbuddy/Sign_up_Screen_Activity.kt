@@ -22,31 +22,12 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpScreenBinding
     private lateinit var userViewModel: UserViewModel
-    private lateinit var ivImageTakerSplitWise: ImageView
-    private lateinit var ivCameraSplitWise: ImageView
-    private val cameraRequestSplitWise = 1222
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ivImageTakerSplitWise = binding.ivImageTakerSplitWise
-        ivCameraSplitWise = binding.ivCameraSplitWise
-
-        if (ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_DENIED
-        )
-            ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA), cameraRequestSplitWise
-            )
-
-        ivCameraSplitWise.setOnClickListener {
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(cameraIntent, cameraRequestSplitWise)
-        }
 
         binding.btnBackSign.setOnClickListener {
             val intent = Intent(this, LoginSignUp::class.java)
@@ -55,15 +36,15 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
         }
 
         binding.btnDoneSign.setOnClickListener {
-            if (binding.etSignUpFullName.text.isNotEmpty() &&
+            if (binding.etSignUpFullName.editText?.text!!.isNotEmpty() &&
                 binding.etSignUpEmail.editText?.text!!.isNotEmpty() &&
                 binding.etSignUpPassword.editText?.text!!.isNotEmpty()
             ) {
 
                 createDatabase()
                 val userEntity = UserEntity(
-                    name=binding.etSignUpFullName.text.toString(),
-                    phone=binding.etSignUpPhone.text.toString(),
+                    name=binding.etSignUpFullName.editText?.text!!.toString(),
+                    phone=binding.etSignUpPhone.editText?.text!!.toString(),
                     email=binding.etSignUpEmail.editText?.text!!.toString(),
                     password=binding.etSignUpPassword.editText?.text!!.toString(),
                     gender="",
@@ -90,11 +71,4 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
             .get(UserViewModel::class.java)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == cameraRequestSplitWise) {
-            val images: Bitmap = data?.extras?.get("data") as Bitmap
-            ivImageTakerSplitWise.setImageBitmap(images)
-        }
-    }
 }
