@@ -9,17 +9,26 @@ import com.example.billbuddy.R
 import com.example.billbuddy.jing.RecentActivityAdapter
 import com.example.billbuddy.vinay.database.recent_activity.RecentActivityEntity
 import com.example.billbuddy.vinay.database.recent_activity.RecentActivityTransactionEntity
+import com.example.billbuddy.vinay.database.users.UserEntity
 import com.example.billbuddy.vinay.viewmodels.RecentActivityTransactionViewModel
 import com.example.billbuddy.vinay.viewmodels.RecentActivityTransactionViewModelFactory
 import com.example.billbuddy.vinay.viewmodels.RecentActivityViewModel
 import com.example.billbuddy.vinay.viewmodels.RecentActivityViewModelFactory
+import com.example.billbuddy.vinay.viewmodels.UserViewModel
+import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
 import com.example.billbuddy.vinay.views.SplitwiseApplication
+import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 
 class RecentActivity : AppCompatActivity(){
 
     private lateinit var binding: RecentActivityBinding
     private lateinit var recentActivityViewModel: RecentActivityViewModel
     private lateinit var recentActivityTransactionViewModel: RecentActivityTransactionViewModel
+    private lateinit var userViewModel: UserViewModel
+    private var userList = mutableListOf<UserEntity>()
+    private val preferenceHelper by lazy { PreferenceHelper(this) }
+    private lateinit var currentUser: UserEntity
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.recent_activity)
@@ -29,13 +38,15 @@ class RecentActivity : AppCompatActivity(){
         binding.rvActivityList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         //activity list from database
         val activityList : List<Any> = getSortActivity()
-        binding.rvActivityList.adapter = RecentActivityAdapter(activityList,this) //pass list to adapter
+        getUsers()
+        binding.rvActivityList.adapter = RecentActivityAdapter(activityList,currentUser,userList,this) //pass list to adapter
 
     }
 
     override fun onResume() {
         super.onResume()
-        binding.rvActivityList.adapter = RecentActivityAdapter(getSortActivity(),this) //pass list to adapter
+        getUsers()
+        binding.rvActivityList.adapter = RecentActivityAdapter(getSortActivity(),currentUser,userList,this) //pass list to adapter
         getSortActivity()
     }
     // refresh page when data changed
@@ -77,13 +88,25 @@ class RecentActivity : AppCompatActivity(){
         return sortedList
     }
 
+    //return current username and whether the id provided is current user
+    private fun getUsers(){
+        //set currentUser
+        currentUser = userList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }!!
+        //set userList
+        userViewModel.getUserList().observe(this,Observer{
+            userList.clear()
+            userList.addAll(it)
+        })
+    }
     private fun createDatabase() {
         val appClass = application as SplitwiseApplication
         val recentActivityRepository = appClass.recentActivityRepository
         val recentActivityTransactionRepository = appClass.recentActivityTransactionRepository
+        val userRepository = appClass.userRepository
         val recentActivityViewModelFactory = RecentActivityViewModelFactory(recentActivityRepository)
         val recentActivityTransactionViewModelFactory =
             RecentActivityTransactionViewModelFactory(recentActivityTransactionRepository)
+        val userViewModelFactory = UserViewModelFactory(userRepository)
 
         recentActivityViewModel = ViewModelProvider(this, recentActivityViewModelFactory)
             .get(RecentActivityViewModel::class.java)
@@ -91,5 +114,7 @@ class RecentActivity : AppCompatActivity(){
         recentActivityTransactionViewModel = ViewModelProvider(this, recentActivityTransactionViewModelFactory)
             .get(RecentActivityTransactionViewModel::class.java)
 
+        userViewModel = ViewModelProvider(this, userViewModelFactory)
+            .get(UserViewModel::class.java)
     }
 }
