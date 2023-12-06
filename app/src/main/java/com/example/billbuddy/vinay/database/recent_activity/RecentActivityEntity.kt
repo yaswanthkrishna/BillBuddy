@@ -12,7 +12,6 @@ data class RecentActivityEntity(
     @ColumnInfo(name = "creator") var creator: String?,
     //Total amount, -1 if not involved in money
     @ColumnInfo(name = "amount") var amount: Int,
-
     //empty if it's not a group transaction
     @ColumnInfo(name = "targetGroupName") var targetGroupName: String?,
     @ColumnInfo(name = "targetUser") var targetUser: String?,
