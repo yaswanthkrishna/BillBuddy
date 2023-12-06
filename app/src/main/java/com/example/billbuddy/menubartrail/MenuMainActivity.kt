@@ -77,9 +77,9 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, HomeFragment::class.java)
-                startActivity(intent)
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_home)
             }
+
         }
         return true
     }

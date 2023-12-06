@@ -19,9 +19,6 @@ class RecentActivity : AppCompatActivity(){
         val activityList : List<Any> = getSortActivity()
         binding.rvActivityList.adapter = RecentActivityAdapter(activityList,this) //pass list to adapter
 
-        binding.rvButton.setOnClickListener{
-            refresh()
-        }
     }
 
     // refresh page when data changed
