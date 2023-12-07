@@ -14,11 +14,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.billbuddy.R
+import com.example.billbuddy.Transactions
 import com.example.billbuddy.menubartrail.ui.home.HomeFragment
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinayactivity.AddFriendActivity
 import com.example.billbuddy.vinayactivity.CreateGroup
+import com.example.billbuddy.yaswanth.TransactionsActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -47,7 +49,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_settings, R.id.nav_ScaneCode, R.id.nav_Contact
+                R.id.nav_home, R.id.nav_transaction, R.id.nav_ScaneCode, R.id.nav_Contact
             ), drawerLayout
         )
 
@@ -79,10 +81,17 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             R.id.nav_home -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.nav_home)
             }
-
+            R.id.nav_ScaneCode -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_ScaneCode)
+            }
+            R.id.nav_transaction -> {
+                val intent = Intent(this, TransactionsActivity::class.java)
+                startActivity(intent)
+            }
         }
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

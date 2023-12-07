@@ -26,6 +26,9 @@
         android:theme="@style/Theme.BillBuddy_Login"
         tools:targetApi="31">
         <activity
+            android:name=".yaswanth.TransactionsActivity"
+            android:exported="false" />
+        <activity
             android:name=".vinayactivity.CreateGroup"
             android:exported="false" />
         <activity

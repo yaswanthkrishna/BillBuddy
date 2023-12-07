@@ -1,0 +1,40 @@
+<!-- res/layout/fragment_settle_up.xml -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/friendNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friend Name"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/balanceTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Balance: $0.00"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/settleUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Settle Up"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Add the ComposeView container -->
+    <FrameLayout
+        android:id="@+id/composeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </FrameLayout>
+
+</LinearLayout>
