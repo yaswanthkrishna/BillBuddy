@@ -23,4 +23,10 @@ interface TransactionDAO {
     @Query("SELECT * FROM Transaction_table WHERE Paid_by_userid = :friendId")
     fun getTransactionsForFriend(friendId: Long): LiveData<List<TransactionEntity>>
 
+    @Query("SELECT * FROM Transaction_table WHERE Group_flag = 1") // Assuming groupFlag = 1 for group transactions
+    fun getGroupTransactions(): LiveData<List<TransactionEntity>>
+
+    @Query("SELECT * FROM Transaction_table WHERE Group_flag = 0") // Assuming groupFlag = 0 for friend transactions
+    fun getFriendTransactions(): LiveData<List<TransactionEntity>>
+
 }

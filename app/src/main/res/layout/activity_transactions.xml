@@ -6,17 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".yaswanth.TransactionsActivity">
-
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/splitwiseBg"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        tools:ignore="MissingConstraints">
-
-        <!-- Back Button -->
+        app:layout_constraintTop_toTopOf="parent">
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
@@ -25,7 +21,6 @@
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/back_arrow"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,8 +31,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvBackArrow"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Title -->
         <TextView
             android:id="@+id/toolbarTitle"
             style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
@@ -52,8 +45,6 @@
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:layout_weight="1"/>
-
-        <!-- Dropdown Menu -->
         <Spinner
             android:id="@+id/spinnerOptions"
             android:layout_width="wrap_content"
@@ -61,15 +52,12 @@
             android:layout_gravity="end"
             android:layout_marginEnd="8dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
-
     </androidx.appcompat.widget.Toolbar>
-
     <FrameLayout
-        android:id="@+id/fragmentContainer"
+        android:id="@+id/fragmentContainerTransaction"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- activity_tarnsactionsxml -->
