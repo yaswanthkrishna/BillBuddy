@@ -4,4 +4,4 @@
     android:id="@+id/rvGroupsList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/tvOverallAmount" />
+    android:layout_below="@id/tvOverallAmount2_group" />

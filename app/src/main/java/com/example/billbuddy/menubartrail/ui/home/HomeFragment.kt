@@ -25,25 +25,19 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
         viewPager = view.findViewById(R.id.dashboardViewPager)
         tabs = view.findViewById(R.id.tabs)
         userEmail = getEmailFromPreferences()
-
         viewPager.adapter = DashboardPagerAdapter(this, userEmail)
-
-        // Set up the TabLayout to work with ViewPager2
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = if (position == 0) "Friends" else "Groups"
         }.attach()
-
         return view
     }
 
     private inner class DashboardPagerAdapter(fragment: Fragment, private val userEmail: String) :
         FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = 2 // We have two fragments
-
         override fun createFragment(position: Int): Fragment {
             return if (position == 0) {
                 FriendsFragment().apply {
@@ -52,7 +46,11 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
-                FriendsFragment()
+                GroupsFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("email", userEmail)
+                    }
+                }
             }
         }
     }

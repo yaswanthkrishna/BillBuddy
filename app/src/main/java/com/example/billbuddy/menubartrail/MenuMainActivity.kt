@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.billbuddy.R
 import com.example.billbuddy.Transactions
 import com.example.billbuddy.menubartrail.ui.home.HomeFragment
+import com.example.billbuddy.menubartrail.ui.home.FriendDetailFragment
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinayactivity.AddFriendActivity

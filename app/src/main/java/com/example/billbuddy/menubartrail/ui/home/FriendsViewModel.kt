@@ -19,7 +19,7 @@ class FriendsViewModel(private val friendDAO: FriendDAO, private var userId: Lon
     private fun fetchFriends() {
         friendDAO.getFriendsList(userId).observeForever { friendEntities ->
             val friends = friendEntities.map { entity ->
-                Friend(entity.id, entity.userId, entity.friendUserId, entity.owe, entity.owes, entity.totalDue, entity.name) // Assuming name is empty or fetched from another source
+                Friend(entity.id, entity.userId, entity.friendUserId, entity.owe, entity.owes, entity.totalDue, entity.name)
             }
             friendsList.postValue(friends)
         }
