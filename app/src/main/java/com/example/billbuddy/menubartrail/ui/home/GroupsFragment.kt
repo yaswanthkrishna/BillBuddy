@@ -1,86 +1,104 @@
-/*package com.example.billbuddy_login_login.menubartrail.ui.home
+package com.example.billbuddy.menubartrail.ui.home
 
-// Import necessary libraries
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.billbuddy_login.vinay.database.friend_non_group.AppDatabase
+import com.example.billbuddy.GroupDetail
+import com.example.billbuddy.R
+import com.example.billbuddy.vinay.database.SplitwiseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GroupsFragment : Fragment() {
-    // Declare your UI elements here
     private lateinit var rvGroups: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var btnAddGroup: MaterialButton
-    private lateinit var searchBar: TextInputEditText
-    private lateinit var btnFilter: MaterialButton
+    private lateinit var searchBar: AppCompatEditText
     private lateinit var btnRefresh: MaterialButton
-
-    // Assuming you have a ViewModel to fetch and manage data
-    private val viewModel: GroupsViewModel by viewModels()
+    private var currentFilter = "all"
+    private lateinit var viewModel: GroupsViewModel
+    companion object {
+        fun Double.format(digits: Int) = "%.${digits}f".format(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val database = SplitwiseDatabase.getDatabase(requireContext())
+        val groupDao = database.getMyGroupListEntries()
+        val factory = GroupsViewModelFactory(groupDao, 0L)
+        viewModel = ViewModelProvider(this, factory)[GroupsViewModel::class.java]
+        viewModel.refreshGroupsList()
+        val userEmail = arguments?.getString("email") ?: ""
+        getCurrentUserId(userEmail) { userId ->
+            viewModel.updateUserId(userId)
+        }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Inflate your layout for this fragment
         return inflater.inflate(R.layout.fragment_groups, container, false)
+        viewModel.refreshGroupsList()
     }
-
+    private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val userDAO = SplitwiseDatabase.getDatabase(requireContext()).getMyUserEntries()
+            val userId = userDAO.getUserIdByEmail(email) ?: 0L
+            withContext(Dispatchers.Main) {
+                callback(userId)
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Initialize your UI elements here
-        rvGroups = view.findViewById(R.id.rvGroupsList)
-        tvOverallAmount = view.findViewById(R.id.tvOverallAmount)
-        btnAddGroup = view.findViewById(R.id.btnAddGroup)
-        searchBar = view.findViewById(R.id.searchBar)
-        btnFilter = view.findViewById(R.id.btnFilter)
-        btnRefresh = view.findViewById(R.id.btnRefresh)
-
-        // Initialize the adapter with an empty list or data from the ViewModel
-        val adapter = GroupsAdapter(emptyList())
-        rvGroups.adapter = adapter
+        rvGroups = view.findViewById(R.id.groupsList)
+        tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
+        searchBar = view.findViewById(R.id.searchBar2_group) as AppCompatEditText
+        btnRefresh = view.findViewById(R.id.btnRefresh2_group)
+        rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
-
-        // Set up listeners and bindings for search, filter, and refresh functionalities
-        btnAddGroup.setOnClickListener {
-            //navigateToAddGroup() // You'll need to implement this method
-        }
-        searchBar.addTextChangedListener {
-            // Code to filter the friends list based on the search query
-        }
-        btnFilter.setOnClickListener {
-            // Code to show filter options and apply selected filters
+        searchBar.addTextChangedListener { text ->
+            viewModel.searchGroups(text.toString())
         }
         btnRefresh.setOnClickListener {
-            // Code to refresh data from the database
+            viewModel.refreshGroupsList()
+        }
+        viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
+            tvOverallAmount.text = when {
+                total > 0 -> "Total Amount You are Owed: $${total.format(2)}"
+                total < 0 -> "Total Amount You Owe: -\$${total.format(2)}"
+                else -> "Total Amount: $0.00"
+            }
+        }
+        viewModel.groupDetailsList.observe(viewLifecycleOwner) { groupDetails ->
+            if (groupDetails != null && groupDetails.isNotEmpty()) {
+                updateList(groupDetails)
+            } else {
+                // Handle empty or null list, e.g., show a message or hide the list
+            }
         }
 
-        // Observe data changes from the ViewModel and update UI accordingly
-        viewModel.groupsList.observe(viewLifecycleOwner) { groupsList ->
-            // Update the adapter with the new list
-// This should reference rvGroups, not rvFriends
-            (rvGroups.adapter as GroupsAdapter).updateList(groupsList)
-            // Calculate and update the overall amount
-            tvOverallAmount.text = calculateOverallAmount(groupsList)
+        viewModel.refreshGroupsList()
+    }
+    private fun updateList(groups: List<GroupDetail>) {
+        val adapter = rvGroups.adapter as? GroupsAdapter
+        adapter?.updateList(groups)
+    }
+    private fun Double.format(digits: Int) = "%.${digits}f".format(this)
+    /*private fun showFilterOptions() {
+        if (currentFilter == "all") {
+            viewModel.filterGroupsList("credit")
+            currentFilter = "credit"
         }
-    }
-
-    // Method to calculate the overall amount
-    private fun calculateOverallAmount(groupsList: List<Group>): String {
-        // Implement your logic to calculate the overall amount
-        // Sum up what others owe you and subtract what you owe
-        return "$0.00" // Placeholder
-    }
+        else {
+            viewModel.filterGroupsList("all")
+            currentFilter = "all"
+        }
+    }*/
 }
-
-*/

@@ -13,6 +13,7 @@ data class GroupEntity(
     @ColumnInfo(name = "time") var time: String?,
     @ColumnInfo(name = "creator") var creator: Int
 ) {
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int? = null

@@ -20,5 +20,7 @@ interface TransactionDAO {
     @Query("SELECT MAX(transaction_id)+1 FROM Transaction_table")
     suspend fun getNextTransactionId(): Long?
 
+    @Query("SELECT * FROM Transaction_table WHERE Paid_by_userid = :friendId")
+    fun getTransactionsForFriend(friendId: Long): LiveData<List<TransactionEntity>>
 
 }

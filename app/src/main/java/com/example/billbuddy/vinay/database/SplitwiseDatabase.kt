@@ -8,6 +8,8 @@ import com.example.billbuddy.vinay.database.friend_non_group.FriendDAO
 import com.example.billbuddy.vinay.database.friend_non_group.FriendEntity
 import com.example.billbuddy.vinay.database.friend_non_group.FriendTransactionDAO
 import com.example.billbuddy.vinay.database.friend_non_group.FriendTransactionEntity
+import com.example.billbuddy.vinay.database.groups.GroupDAO
+import com.example.billbuddy.vinay.database.groups.GroupEntity
 import com.example.billbuddy.vinay.database.groups.GroupListDAO
 import com.example.billbuddy.vinay.database.groups.GroupListEntity
 import com.example.billbuddy.vinay.database.groups.GroupMemberDAO
@@ -27,7 +29,7 @@ import com.example.billbuddy.vinay.database.users.UserEntity
 @Database(entities = arrayOf(UserEntity::class,
     TransactionEntity::class, FriendTransactionEntity::class,GroupTransactionMemberEntity::class,NonGroupTransactionMemberEntity::class,
     FriendEntity::class,GroupListEntity::class,GroupMemberEntity::class,GroupTransactionEntity::class)
-    , version = 2)
+    , version = 4)
 abstract class SplitwiseDatabase() : RoomDatabase() {
     abstract fun getMyUserEntries(): UserDAO
     abstract fun getMyTransactionEntries(): TransactionDAO
