@@ -59,6 +59,7 @@ android {
 }
 
 dependencies {
+    implementation("com.paypal.checkout:android-sdk:1.1.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("com.github.bumptech.glide:glide:4.13.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
