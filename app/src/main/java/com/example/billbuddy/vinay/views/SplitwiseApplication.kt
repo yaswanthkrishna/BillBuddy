@@ -2,6 +2,8 @@ package com.example.billbuddy.vinay.views
 
 import android.app.Application
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
+import com.example.billbuddy.vinay.database.recent_activity.RecentActivityDAO
+import com.example.billbuddy.vinay.database.recent_activity.RecentActivityTransactionDAO
 import com.example.billbuddy.vinay.repositories.FriendRepository
 import com.example.billbuddy.vinay.repositories.FriendTransactionRepository
 import com.example.billbuddy.vinay.repositories.GroupListRepository
@@ -10,6 +12,8 @@ import com.example.billbuddy.vinay.repositories.UserRepository
 import com.example.billbuddy.vinay.repositories.GroupTransactionMemberRepository
 import com.example.billbuddy.vinay.repositories.GroupTransactionRepository
 import com.example.billbuddy.vinay.repositories.NonGroupTransactionMemberRepository
+import com.example.billbuddy.vinay.repositories.RecentActivityRepository
+import com.example.billbuddy.vinay.repositories.RecentActivityTransactionRepository
 import com.example.billbuddy.vinay.repositories.TransactionRepository
 
 class SplitwiseApplication : Application() {
@@ -55,6 +59,14 @@ class SplitwiseApplication : Application() {
         val roomDatabase = SplitwiseDatabase.getDatabase(this)
         roomDatabase.getMyGroupTransactionEntries()
     }
+    val recentActivityDAO by lazy{
+        val roomDatabase = SplitwiseDatabase.getDatabase(this)
+        roomDatabase.getMyRecentActivityEntries()
+    }
+    val recentActivityTransactionDAO by lazy{
+        val roomDatabase = SplitwiseDatabase.getDatabase(this)
+        roomDatabase.getMyRecentActivityTransactionEntries()
+    }
 
     val userRepository by lazy {
         UserRepository(userDAO)
@@ -82,5 +94,11 @@ class SplitwiseApplication : Application() {
     }
     val groupTransactionRepository by lazy {
         GroupTransactionRepository(groupTransactionDAO)
+    }
+    val recentActivityRepository by lazy {
+        RecentActivityRepository(recentActivityDAO)
+    }
+    val recentActivityTransactionRepository by lazy {
+        RecentActivityTransactionRepository(recentActivityTransactionDAO)
     }
 }
