@@ -11,6 +11,12 @@ import com.example.billbuddy.vinay.repositories.GroupTransactionMemberRepository
 import com.example.billbuddy.vinay.repositories.GroupTransactionRepository
 import com.example.billbuddy.vinay.repositories.NonGroupTransactionMemberRepository
 import com.example.billbuddy.vinay.repositories.TransactionRepository
+import com.paypal.checkout.PayPalCheckout
+import com.paypal.checkout.config.CheckoutConfig
+import com.paypal.checkout.config.Environment
+import com.paypal.checkout.config.SettingsConfig
+import com.paypal.checkout.createorder.CurrencyCode
+import com.paypal.checkout.createorder.UserAction
 
 class SplitwiseApplication : Application() {
 
@@ -82,5 +88,24 @@ class SplitwiseApplication : Application() {
     }
     val groupTransactionRepository by lazy {
         GroupTransactionRepository(groupTransactionDAO)
+    }
+
+    var clientID = "AR8RFp4OHpvKY0cQ9of4f3P5LI0z7FtjJeHSCUCNZTx4JA3o3o8uoUZs6gKEmsVEQ2Ap6qmsaymosss7"
+    var returnUrl = "com.example.billbuddy://paypalpay"
+    override fun onCreate() {
+        super.onCreate()
+        PayPalCheckout.setConfig(
+            CheckoutConfig(
+                application = this,
+                clientId = clientID,
+                environment = Environment.SANDBOX,
+                returnUrl = returnUrl,
+                currencyCode = CurrencyCode.USD,
+                userAction = UserAction.PAY_NOW,
+                settingsConfig = SettingsConfig(
+                    loggingEnabled = true
+                )
+            )
+        )
     }
 }

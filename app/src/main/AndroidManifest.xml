@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:name=".vinay.views.SplitwiseApplication"
@@ -62,6 +64,9 @@
         <activity
             android:name=".jing.RecentActivity"
             android:exported="false"/>
+        <activity
+            android:name = ".SettleUp_paypal"
+            android:exported= "false"/>
         <activity
             android:name=".LoginSignUp"
             android:exported="true"
