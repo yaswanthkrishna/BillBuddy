@@ -150,8 +150,7 @@ class AddFriendActivity : AppCompatActivity() {
         recyclerView.adapter = contactsAdapter
 
         // Set up RecyclerView for selected contacts
-        val orientation = resources.configuration.orientation
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             val selectedLayoutManager = GridLayoutManager(this,5)
             selectedRecyclerView.layoutManager = selectedLayoutManager
             selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
