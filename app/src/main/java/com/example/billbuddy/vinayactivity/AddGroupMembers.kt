@@ -2,7 +2,10 @@ package com.example.billbuddy.vinayactivity
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.pm.ActivityInfo
+import android.content.pm.ConfigurationInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -20,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
@@ -171,11 +175,19 @@ class AddGroupMembers : Fragment() {
         recyclerView.adapter = contactsAdapter
 
         // Set up RecyclerView for selected contacts
-        val selectedLayoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        selectedRecyclerView.layoutManager = selectedLayoutManager
-        selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
-        selectedRecyclerView.adapter = selectedContactsAdapter
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+            val selectedLayoutManager = GridLayoutManager(requireContext(),5)
+            selectedRecyclerView.layoutManager = selectedLayoutManager
+            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
+            selectedRecyclerView.adapter = selectedContactsAdapter
+        }else {
+            val selectedLayoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            selectedRecyclerView.layoutManager = selectedLayoutManager
+            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
+            selectedRecyclerView.adapter = selectedContactsAdapter
+        }
     }
 
     @SuppressLint("Range")

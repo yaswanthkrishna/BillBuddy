@@ -1,6 +1,7 @@
 package com.example.billbuddy
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,8 @@ class Login_Screen_Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+
         binding = ActivityLoginScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

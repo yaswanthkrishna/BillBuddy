@@ -1,6 +1,7 @@
 package com.example.billbuddy.menubartrail
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -33,6 +34,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
         setContentView(R.layout.activity_main2)
 
         preferenceHelper = PreferenceHelper(this)
