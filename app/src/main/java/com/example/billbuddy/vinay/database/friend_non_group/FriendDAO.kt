@@ -25,4 +25,7 @@ interface FriendDAO {
 
     @Query("UPDATE friends_table SET total_due = owes - owe WHERE user_id = :userId AND friend_user_id = :friendUserId")
     suspend fun updateTotalDue(userId: Long, friendUserId: Long)
+
+    @Query("SELECT * FROM friends_table WHERE name LIKE :name")
+    suspend fun getFriendsByName(name: String): List<FriendEntity>
 }

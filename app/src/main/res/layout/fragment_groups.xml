@@ -36,21 +36,11 @@
         android:id="@+id/groupsList"
         android:layout_width="match_parent"
         android:layout_height="485dp"
-        android:layout_above="@id/searchBar2_group"
+        android:layout_above="@id/btnRefresh2_group"
         android:layout_below="@id/cardview_group"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="22dp"
         android:clickable="true"/>
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/searchBar2_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/btnRefresh2_group"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="16dp"
-        android:hint="Search friends" />
 
     <Button
         android:id="@+id/btnRefresh2_group"

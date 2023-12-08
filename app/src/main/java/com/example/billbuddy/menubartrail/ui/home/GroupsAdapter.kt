@@ -31,7 +31,7 @@ class GroupsAdapter(private var groups: List<GroupDetail>) : RecyclerView.Adapte
 
         holder.amountTextView.text = if (balance >= 0) {
             holder.amountTextView.setTextColor(Color.GREEN)
-            "+$${balance.format(2)}"
+            "$${balance.format(2)}"
         } else {
             holder.amountTextView.setTextColor(Color.RED)
             "-$${(-balance).format(2)}"
