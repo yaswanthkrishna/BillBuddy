@@ -60,6 +60,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.paypal.checkout:android-sdk:1.1.0")

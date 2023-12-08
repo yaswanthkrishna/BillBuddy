@@ -20,10 +20,10 @@
             android:layout_height="wrap_content"
             android:text="Overall, you owe $0.00"
             android:textSize="15sp"
-            android:textColor="#006400"
+            android:textColor="#008600"
             android:fontFamily="sans-serif-medium"
             android:textStyle="bold"
-            android:shadowColor="#000"
+            android:shadowColor="#0000"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="2"
@@ -32,16 +32,21 @@
     </androidx.cardview.widget.CardView>
     <!-- Replacing ListView with RecyclerView -->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/groupsList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="485dp"
-        android:layout_above="@id/btnRefresh2_group"
-        android:layout_below="@id/cardview_group"
-        android:layout_marginTop="7dp"
-        android:layout_marginBottom="22dp"
-        android:clickable="true"/>
+        android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groupsList"
+            android:layout_width="match_parent"
+            android:layout_height="485dp"
+            android:layout_above="@id/btnRefresh2_group"
+            android:layout_below="@id/cardview_group"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="22dp"
+            android:clickable="true"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <Button
         android:id="@+id/btnRefresh2_group"
         android:layout_width="wrap_content"

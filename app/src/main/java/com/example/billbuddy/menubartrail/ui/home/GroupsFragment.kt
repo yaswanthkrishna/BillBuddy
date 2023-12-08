@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.billbuddy.GroupDetail
 import com.example.billbuddy.R
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
@@ -54,12 +55,16 @@ class GroupsFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.refreshLayout)
         rvGroups = view.findViewById(R.id.groupsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
         btnRefresh = view.findViewById(R.id.btnRefresh2_group)
         rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
         btnRefresh.setOnClickListener {
+            viewModel.refreshGroupsList()
+        }
+        swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshGroupsList()
         }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
