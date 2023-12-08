@@ -17,5 +17,13 @@ interface GroupMemberDAO {
     @Delete
     suspend fun deleteGroupMember(groupMemberEntity: GroupMemberEntity)
 
+    @Query("UPDATE Group_member_table SET User_owe = User_owe + :newUserOwe WHERE Group_id = :groupId AND User_id = :userId")
+    suspend fun updateUserOwe(groupId: Long, userId: Long, newUserOwe: Double)
+
+    @Query("UPDATE Group_member_table SET Group_owes = Group_owes +:newGroupOwes WHERE Group_id = :groupId AND User_id = :userId")
+    suspend fun updateGroupOwes(groupId: Long, userId: Long, newGroupOwes: Double)
+
+    @Query("UPDATE Group_member_table SET Total_due = (Group_owes - User_owe) WHERE Group_id = :groupId AND User_id = :userId")
+    suspend fun updateTotalDue(groupId: Long, userId: Long)
 }
 

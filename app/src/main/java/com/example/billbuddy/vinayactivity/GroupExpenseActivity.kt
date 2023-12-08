@@ -372,7 +372,7 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             totalAmount = totalAmount,
             paidByUserId = userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType = binding.splittype.selectedItem.toString(),
-            groupFlag = false,
+            groupFlag = true,
             receiptImage = image_path ?: "",
             comments = null,
             description = binding.tvDescription.text.toString(),
@@ -436,9 +436,13 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             if (payerName==currentUser.name) {
                 // If the payer is the current user, update the owe amount
                 it.owes = (it.owes.toDouble() + (totalAmount - eachShare)).toString()
+                groupMemberViewModel.updateGroupOwes(groupid,currentUser.user_id,(totalAmount - eachShare))
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
             } else {
                 // If the payer is someone else, update the owed amount
                 it.owe = (it.owe.toDouble() + eachShare).toString()
+                groupMemberViewModel.updateUserOwe(groupid,currentUser.user_id,eachShare)
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
             }
             userViewModel.updateUser(it)
         }
@@ -491,7 +495,7 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             totalAmount=totalAmount,
             paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType=binding.splittype.selectedItem.toString(),
-            groupFlag=false,
+            groupFlag=true,
             receiptImage = image_path ?: "",
             comments=null,
             description=binding.tvDescription.text.toString(),
@@ -540,12 +544,15 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             // Insert the NonGroupTransactionMemberEntity
             groupTransactionMemberViewModel.addGroupTransactionMember(groupTransactionMemberEntity)
 
+            Log.d("groupMemberViewModel","$currentUser")
             if (currentUser != null) {
                 val frienduserid = userViewModel.getUserIdByName(name ?: "") ?: 0L
 
+                Log.d("groupMemberViewModel","$frienduserid")
                 if(payerName==currentUser.name){
                     friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amount)
                     friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                    Log.d("groupMemberViewModel","$amount")
                 }
             }
 
@@ -556,6 +563,7 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
                 val payerid = userViewModel.getUserIdByName(payerName ?: "") ?: 0L
                 friendViewModel.updateOweAmount(currentUser.user_id, payerid, currentuserowe)
                 friendViewModel.updateTotalDue(currentUser.user_id, payerid)
+
             }
         }
 
@@ -564,10 +572,15 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
                 // If the payer is the current user, update the owe amount
                 val currentUserAmount = amounts[it.name] ?: 0.0 // Default to 0 if it.name is not found in amounts
                 it.owes = (it.owes.toDouble() + (totalAmount - currentUserAmount)).toString()
+                groupMemberViewModel.updateGroupOwes(groupid,currentUser.user_id,(totalAmount - currentUserAmount))
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
             } else {
                 // If the payer is someone else, update the owed amount
                 val currentUserAmount = amounts[it.name] ?: 0.0
                 it.owe = (it.owe.toDouble() + currentUserAmount).toString()
+                groupMemberViewModel.updateUserOwe(groupid,currentUser.user_id,currentUserAmount)
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
+
             }
             userViewModel.updateUser(it)
         }
@@ -621,7 +634,7 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             totalAmount=totalAmount,
             paidByUserId=userViewModel.getUserIdByName(payerName) ?: 0L,
             splitType=binding.splittype.selectedItem.toString(),
-            groupFlag=false,
+            groupFlag=true,
             receiptImage = image_path ?: "",
             comments=null,
             description=binding.tvDescription.text.toString(),
@@ -706,9 +719,13 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
                 // If the payer is the current user, update the owe amount
                 val currentUserAmount = amounts[it.name] ?: 0.0 // Default to 0 if it.name is not found in amounts
                 it.owes = (it.owes.toDouble() + (totalAmount - currentUserAmount)).toString()
+                groupMemberViewModel.updateGroupOwes(groupid,currentUser.user_id,(totalAmount - currentUserAmount))
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
             } else {
                 // If the payer is someone else, update the owed amount
                 it.owe = (it.owe.toDouble() + currentUserAmount).toString()
+                groupMemberViewModel.updateUserOwe(groupid,currentUser.user_id,currentUserAmount)
+                groupMemberViewModel.updateTotalDue(groupid,currentUser.user_id)
             }
             userViewModel.updateUser(it)
         }
