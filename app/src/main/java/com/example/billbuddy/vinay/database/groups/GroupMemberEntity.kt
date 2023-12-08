@@ -34,6 +34,12 @@ data class GroupMemberEntity(
     @ColumnInfo(name = "User_id")
     val userId: Long,
 
+    @ColumnInfo(name = "User_name")
+    val userName: String,
+
+    @ColumnInfo(name = "User_phone")
+    val userPhone: String,
+
     @ColumnInfo(name = "User_owe")
     val userOwe: Double,
 

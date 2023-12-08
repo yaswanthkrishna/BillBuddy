@@ -2,10 +2,7 @@ package com.example.billbuddy.vinayactivity
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.pm.ActivityInfo
-import android.content.pm.ConfigurationInfo
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -23,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
@@ -175,19 +171,11 @@ class AddGroupMembers : Fragment() {
         recyclerView.adapter = contactsAdapter
 
         // Set up RecyclerView for selected contacts
-        val orientation = resources.configuration.orientation
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE){
-            val selectedLayoutManager = GridLayoutManager(requireContext(),5)
-            selectedRecyclerView.layoutManager = selectedLayoutManager
-            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
-            selectedRecyclerView.adapter = selectedContactsAdapter
-        }else {
-            val selectedLayoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            selectedRecyclerView.layoutManager = selectedLayoutManager
-            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
-            selectedRecyclerView.adapter = selectedContactsAdapter
-        }
+        val selectedLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        selectedRecyclerView.layoutManager = selectedLayoutManager
+        selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
+        selectedRecyclerView.adapter = selectedContactsAdapter
     }
 
     @SuppressLint("Range")
@@ -215,6 +203,7 @@ class AddGroupMembers : Fragment() {
             cursor.close()
         }
 
+
         return contacts
     }
 
@@ -228,6 +217,7 @@ class AddGroupMembers : Fragment() {
 
     private fun onContactSelected(contact: Contact) {
         // Check if the contact is not already in the selectedContacts list
+
         if (!selectedContacts.contains(contact)) {
             // Add the selected contact to the list
             selectedContacts.add(contact)
@@ -272,9 +262,17 @@ class AddGroupMembers : Fragment() {
     }
 
     private suspend fun addSelectedContactsToGroupDatabase(selectedContacts: MutableList<Contact>) {
+
+
+
         // Get the current user
         val currentUser =
             usersList.firstOrNull { it.user_id == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+
+        Log.d("AddGroupMembercurrentUser","$currentUser")
+        if (currentUser != null) {
+            selectedContacts.add(Contact(currentUser.name, currentUser.phone ?: ""))
+        }
 
         val groupEntity = GroupListEntity(
             groupName = groupName?:"",
@@ -309,17 +307,19 @@ class AddGroupMembers : Fragment() {
                 Log.d("Groups", "Existing:$existingUser")
                 if (existingGroup != null) {
 
-                            val groupMemberEntity =
-                                existingUser?.let {
-                                    GroupMemberEntity(
-                                        groupId = existingGroup,
-                                        userId = it,
-                                        userOwe = 0.0,
-                                        groupOwes = 0.0,
-                                        totalDue = 0.0
-                                    )
-                                }
-                            // Insert the groupMember into the groupList_table
+                    val groupMemberEntity =
+                        existingUser?.let {
+                            GroupMemberEntity(
+                                groupId = existingGroup,
+                                userId = it,
+                                userName = contact.name,
+                                userPhone = contact.phoneNumber,
+                                userOwe = 0.0,
+                                groupOwes = 0.0,
+                                totalDue = 0.0
+                            )
+                        }
+                    // Insert the groupMember into the groupList_table
                     if (groupMemberEntity != null) {
                         groupMemberViewModel.addGroupMember(groupMemberEntity)
                     }
