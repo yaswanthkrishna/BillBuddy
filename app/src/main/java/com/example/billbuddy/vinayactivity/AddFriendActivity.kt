@@ -3,6 +3,7 @@ package com.example.billbuddy.vinayactivity
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
@@ -148,11 +150,19 @@ class AddFriendActivity : AppCompatActivity() {
         recyclerView.adapter = contactsAdapter
 
         // Set up RecyclerView for selected contacts
-        val selectedLayoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        selectedRecyclerView.layoutManager = selectedLayoutManager
-        selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
-        selectedRecyclerView.adapter = selectedContactsAdapter
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+            val selectedLayoutManager = GridLayoutManager(this,5)
+            selectedRecyclerView.layoutManager = selectedLayoutManager
+            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
+            selectedRecyclerView.adapter = selectedContactsAdapter
+        }else {
+            val selectedLayoutManager =
+                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            selectedRecyclerView.layoutManager = selectedLayoutManager
+            selectedContactsAdapter = SelectedContactsAdapter(selectedContacts, ::onRemoveContact)
+            selectedRecyclerView.adapter = selectedContactsAdapter
+        }
     }
 
     @SuppressLint("Range")

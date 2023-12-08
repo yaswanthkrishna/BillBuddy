@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".vinayactivity.AddFriendActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -37,16 +38,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSelectedContacts"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintBottom_toTopOf="@+id/tvFromYourContacts"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        />
     <TextView
         android:id="@+id/tvFromYourContacts"
         android:layout_width="wrap_content"
@@ -54,19 +53,18 @@
         android:layout_marginTop="4dp"
         android:text="From your contacts"
         android:textSize="@dimen/sp_18"
-        app:layout_constraintTop_toBottomOf="@+id/rvSelectedContacts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rvSelectedContacts"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
     <androidx.recyclerview.widget.RecyclerView
-        android:padding="1dp"
         android:id="@+id/rvContactAddTemp"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvFromYourContacts"
+        android:padding="1dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rvSelectedContacts"
+        app:layout_constraintTop_toBottomOf="@+id/tvFromYourContacts" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabToggle"
@@ -84,6 +82,7 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="1.0"
+        app:layout_constraintStart_toEndOf="@id/rvSelectedContacts"
         app:layout_constraintTop_toBottomOf="@+id/rvContactAddTemp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
