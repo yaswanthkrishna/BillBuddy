@@ -29,5 +29,23 @@ class GroupMemberRepository(private val dao: GroupMemberDAO) {
             dao.deleteGroupMember(groupMemberEntity)
         }
     }
+
+    suspend fun updateUserOwe(groupId: Long, userId: Long, newUserOwe: Double) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.updateUserOwe(groupId, userId, newUserOwe)
+        }
+    }
+
+    suspend fun updateGroupOwes(groupId: Long, userId: Long, newGroupOwes: Double) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.updateGroupOwes(groupId, userId,newGroupOwes)
+        }
+    }
+
+    suspend fun updateTotalDue(groupId: Long, userId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.updateTotalDue(groupId, userId)
+        }
+    }
 }
 

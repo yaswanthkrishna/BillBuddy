@@ -35,6 +35,24 @@ class GroupMemberViewModel(private val repository: GroupMemberRepository) : View
         }
     }
 
+    suspend fun updateUserOwe(groupId: Long, userId: Long, newUserOwe: Double) {
+        withContext(Dispatchers.IO) {
+            repository.updateUserOwe(groupId, userId, newUserOwe)
+        }
+    }
+
+    suspend fun updateGroupOwes(groupId: Long, userId: Long,newGroupOwes: Double) {
+        withContext(Dispatchers.IO) {
+            repository.updateGroupOwes(groupId,userId, newGroupOwes)
+        }
+    }
+
+    suspend fun updateTotalDue(groupId: Long, userId: Long) {
+        withContext(Dispatchers.IO) {
+            repository.updateTotalDue(groupId, userId)
+        }
+    }
+
 }
 
 class GroupMemberViewModelFactory(private val repository: GroupMemberRepository) : ViewModelProvider.Factory {
