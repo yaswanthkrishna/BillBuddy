@@ -5,6 +5,9 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -22,6 +25,7 @@ import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinayactivity.AddFriendActivity
 import com.example.billbuddy.vinayactivity.CreateGroup
+import com.example.billbuddy.vinayactivity.GroupExpenseActivity
 import com.example.billbuddy.yaswanth.TransactionsActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -32,6 +36,20 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var preferenceHelper: PreferenceHelper
 
+    private val rotateOpen: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim) }
+
+    private val rotateClose: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim) }
+
+    private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim) }
+
+    private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim) }
+
+    private lateinit var floatingActionButton: FloatingActionButton
+    private lateinit var floatingActionButton2: FloatingActionButton
+    private lateinit var floatingActionButton3: FloatingActionButton// Add this line
+
+    private var clicked = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
@@ -41,10 +59,6 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            val intent = Intent(this, AddExpenseActivity::class.java)
-            startActivity(intent)
-        }
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -60,6 +74,25 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         navView.setupWithNavController(navController)
 
         navView.setNavigationItemSelectedListener(this)
+
+        floatingActionButton = findViewById(R.id.floatingActionButton) // Initialize the FloatingActionButton
+        floatingActionButton2 = findViewById(R.id.floatingActionButton2)
+        floatingActionButton3 = findViewById(R.id.floatingActionButton3)
+
+        floatingActionButton.setOnClickListener {
+            // Handle the click event here
+            onAddButtonClicked()
+        }
+        floatingActionButton2.setOnClickListener {
+            // Handle the click event here
+            val intent = Intent(this, AddExpenseActivity::class.java)
+            startActivity(intent)
+        }
+        floatingActionButton3.setOnClickListener {
+            // Handle the click event here
+            val intent = Intent(this, GroupExpenseActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -114,5 +147,36 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun onAddButtonClicked(){
+        setVisibility(clicked)
+        setAnimation(clicked)
+        clicked = !clicked
+    }
+
+    private fun setAnimation(clicked:Boolean) {
+        if(!clicked){
+            floatingActionButton2.startAnimation(fromBottom)
+            floatingActionButton3.startAnimation(fromBottom)
+            floatingActionButton.startAnimation(rotateOpen)
+        }
+        else{
+            floatingActionButton2.startAnimation(toBottom)
+            floatingActionButton3.startAnimation(toBottom)
+            floatingActionButton.startAnimation(rotateClose)
+        }
+    }
+
+    private fun setVisibility(clicked: Boolean) {
+        if(!clicked){
+            floatingActionButton2.visibility = View.VISIBLE
+            floatingActionButton3.visibility = View.VISIBLE
+        }
+        else{
+            floatingActionButton2.visibility = View.INVISIBLE
+            floatingActionButton3.visibility = View.INVISIBLE
+        }
+
     }
 }
