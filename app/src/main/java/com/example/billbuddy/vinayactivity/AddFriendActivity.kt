@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,11 +21,13 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.versionedparcelable.VersionedParcelize
 import com.example.billbuddy.R
 import com.example.billbuddy.vinay.database.friend_non_group.FriendEntity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
@@ -36,7 +40,6 @@ import com.example.billbuddy.vinay.views.SplitwiseApplication
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 class AddFriendActivity : AppCompatActivity() {
 
     private val CONTACTS_PERMISSION_REQUEST = 1
@@ -199,6 +202,37 @@ class AddFriendActivity : AppCompatActivity() {
         }
 
         contactsAdapter.updateData(filteredContacts)
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        val names: ArrayList<String> = ArrayList()
+        val phoneNumber: ArrayList<String> = ArrayList()
+        for (i in selectedContacts) {
+            names.add(i.name)
+            phoneNumber.add(i.phoneNumber)
+        }
+        outState.putStringArrayList("names", names)
+        outState.putStringArrayList("phoneNumbers",phoneNumber)
+        super.onSaveInstanceState(outState)
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        // Restore selected contacts after an orientation change
+        selectedContacts.clear()
+        val names = savedInstanceState.getStringArrayList("names")
+        val phoneNumbers = savedInstanceState.getStringArrayList("phoneNumbers")
+        val size = names!!.size
+        Log.e("size", size.toString())
+        for (index in 0 until size) {
+                val name = names[index]
+                val phoneNumber = phoneNumbers!![index]
+                selectedContacts.add(Contact(name, phoneNumber))
+                Log.e("storeComplete",index.toString())
+            selectedContactsAdapter.notifyDataSetChanged()
+            updateSelectedContactsVisibility()
+        }
     }
 
     private fun onContactSelected(contact: Contact) {
