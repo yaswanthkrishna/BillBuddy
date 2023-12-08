@@ -45,16 +45,19 @@ abstract class SplitwiseDatabase() : RoomDatabase() {
         private var INSTANCE: SplitwiseDatabase? = null
         fun getDatabase(context: Context): SplitwiseDatabase {
             if (INSTANCE == null) {
-                val builder = Room.databaseBuilder(
-                    context.applicationContext,
-                    SplitwiseDatabase::class.java,
-                    "splitwise_db"
-                )
-                builder.fallbackToDestructiveMigration()
-                return builder.build()
-            } else {
-                return INSTANCE!!
+                synchronized(this) {
+                    if (INSTANCE == null) {
+                        val builder = Room.databaseBuilder(
+                            context.applicationContext,
+                            SplitwiseDatabase::class.java,
+                            "splitwise_db"
+                        )
+                        builder.fallbackToDestructiveMigration()
+                        INSTANCE = builder.build()
+                    }
+                }
             }
+            return INSTANCE!!
         }
     }
 }

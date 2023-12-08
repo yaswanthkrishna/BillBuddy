@@ -3,6 +3,7 @@ package com.example.billbuddy.vinay.database.transactions
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "Transaction_table")
 data class TransactionEntity(
@@ -36,4 +37,4 @@ data class TransactionEntity(
 
     @ColumnInfo(name = "notes")
     val notes: String
-)
+): Serializable
