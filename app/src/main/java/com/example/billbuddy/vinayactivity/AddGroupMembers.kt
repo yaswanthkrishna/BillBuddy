@@ -207,6 +207,39 @@ class AddGroupMembers : Fragment() {
         return contacts
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        val names: ArrayList<String> = ArrayList()
+        val phoneNumber: ArrayList<String> = ArrayList()
+        for (i in selectedContacts) {
+            names.add(i.name)
+            phoneNumber.add(i.phoneNumber)
+        }
+        outState.putStringArrayList("names", names)
+        outState.putStringArrayList("phoneNumbers",phoneNumber)
+        super.onSaveInstanceState(outState)
+
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        // Restore selected contacts after an orientation change
+        if (savedInstanceState != null) {
+            selectedContacts.clear()
+            val names = savedInstanceState.getStringArrayList("names")
+            val phoneNumbers = savedInstanceState.getStringArrayList("phoneNumbers")
+            val size = names!!.size
+            Log.e("size", size.toString())
+            for (index in 0 until size) {
+                val name = names[index]
+                val phoneNumber = phoneNumbers!![index]
+                selectedContacts.add(Contact(name, phoneNumber))
+                Log.e("storeComplete", index.toString())
+                selectedContactsAdapter.notifyDataSetChanged()
+                updateSelectedContactsVisibility()
+            }
+        }
+    }
     private fun filterContacts(query: String) {
         val filteredContacts = allContacts.filter {
             it.name.contains(query, ignoreCase = true) || it.phoneNumber.contains(query)
