@@ -26,6 +26,9 @@ interface UserDAO {
     @Query("SELECT name, phone FROM user_table WHERE user_id = :userId")
     suspend fun getNameAndPhoneByUserId(userId: Long): NameAndPhone?
 
+    @Query("SELECT name FROM user_table WHERE user_id = :userId")
+    suspend fun getUserNameById(userId: Long): String
+
     data class NameAndPhone(val name: String, val phone: String)
 
 }

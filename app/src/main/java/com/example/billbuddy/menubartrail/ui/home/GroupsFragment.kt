@@ -23,9 +23,7 @@ import kotlinx.coroutines.withContext
 class GroupsFragment : Fragment() {
     private lateinit var rvGroups: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var searchBar: AppCompatEditText
     private lateinit var btnRefresh: MaterialButton
-    private var currentFilter = "all"
     private lateinit var viewModel: GroupsViewModel
     companion object {
         fun Double.format(digits: Int) = "%.${digits}f".format(this)
@@ -44,7 +42,6 @@ class GroupsFragment : Fragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_groups, container, false)
-        viewModel.refreshGroupsList()
     }
     private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -59,13 +56,9 @@ class GroupsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGroups = view.findViewById(R.id.groupsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
-        searchBar = view.findViewById(R.id.searchBar2_group) as AppCompatEditText
         btnRefresh = view.findViewById(R.id.btnRefresh2_group)
         rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
-        searchBar.addTextChangedListener { text ->
-            viewModel.searchGroups(text.toString())
-        }
         btnRefresh.setOnClickListener {
             viewModel.refreshGroupsList()
         }
@@ -83,7 +76,6 @@ class GroupsFragment : Fragment() {
                 // Handle empty or null list, e.g., show a message or hide the list
             }
         }
-
         viewModel.refreshGroupsList()
     }
     private fun updateList(groups: List<GroupDetail>) {
@@ -91,14 +83,4 @@ class GroupsFragment : Fragment() {
         adapter?.updateList(groups)
     }
     private fun Double.format(digits: Int) = "%.${digits}f".format(this)
-    /*private fun showFilterOptions() {
-        if (currentFilter == "all") {
-            viewModel.filterGroupsList("credit")
-            currentFilter = "credit"
-        }
-        else {
-            viewModel.filterGroupsList("all")
-            currentFilter = "all"
-        }
-    }*/
 }

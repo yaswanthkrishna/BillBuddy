@@ -29,4 +29,14 @@ interface TransactionDAO {
     @Query("SELECT * FROM Transaction_table WHERE Group_flag = 0") // Assuming groupFlag = 0 for friend transactions
     fun getFriendTransactions(): LiveData<List<TransactionEntity>>
 
+
+    @Transaction
+    @Query("""
+        SELECT u.name 
+        FROM User_table u 
+        JOIN NonGroup_Transaction_member ng ON u.user_id = ng.userId 
+        WHERE ng.transactionId = :transactionId AND u.user_id != :paidByUserId
+    """)
+    suspend fun getNonGroupTransactionMembers(transactionId: Long, paidByUserId: Long): List<String>
+
 }

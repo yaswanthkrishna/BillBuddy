@@ -1,44 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/white"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textViewTransactionId"
+    <!-- Floating Action Buttons -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="618dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/textViewTransactionDetailsHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Transaction Details"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textColor="@color/green" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <!-- Transaction ID -->
+                    <TextView
+                        android:id="@+id/textViewTransactionId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:text="Transaction ID"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                    <!-- Paid By -->
+                    <TextView
+                        android:id="@+id/textViewPayer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewTransactionId"
+                        android:text="Paid by"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                    <!-- Date -->
+                    <TextView
+                        android:id="@+id/textViewDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewPayer"
+                        android:text="Date"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                    <!-- Group/Friends -->
+                    <TextView
+                        android:id="@+id/textViewGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewDate"
+                        android:text="Group/Friends"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                    <!-- Amount -->
+                    <TextView
+                        android:id="@+id/textViewAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewGroup"
+                        android:text="Amount"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Comments -->
+            <TextView
+                android:id="@+id/textViewComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Comments"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <!-- Notes -->
+            <TextView
+                android:id="@+id/textViewNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Notes"
+                android:textAppearance="?attr/textAppearanceListItem" />
+            <!-- ImageView for Receipt -->
+            <ImageView
+                android:id="@+id/imageViewReceipt"
+                android:layout_width="match_parent"
+                android:layout_height="305dp"
+                android:layout_margin="8dp"
+                android:scaleType="matrix"
+                android:src="@drawable/ic_placeholder" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transaction ID"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/comments"
+        app:backgroundTint="@color/green" />
 
-    <TextView
-        android:id="@+id/textViewPayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Paid by"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <TextView
-        android:id="@+id/textViewAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <TextView
-        android:id="@+id/textViewDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <TextView
-        android:id="@+id/textViewOwedAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount Owed"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <!-- Add additional views for more details as needed -->
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

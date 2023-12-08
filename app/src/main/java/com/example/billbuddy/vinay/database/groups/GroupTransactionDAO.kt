@@ -19,5 +19,9 @@ interface GroupTransactionDAO {
     @Delete
     suspend fun deleteGroupTransaction(groupTransactionEntity: GroupTransactionEntity)
 
+    @Query("SELECT group_name FROM GroupList_table WHERE groupId = :groupId")
+    suspend fun getGroupNameByGroupId(groupId: Long): String
+    @Query("SELECT Group_id FROM Group_Transaction_table WHERE Transaction_id = :transactionId")
+    suspend fun getGroupIdByTransactionId(transactionId: Long): Long?
 }
 
