@@ -2,6 +2,7 @@ package com.example.billbuddy
 
 import android.Manifest
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -25,6 +26,8 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+
         binding = ActivitySignUpScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
