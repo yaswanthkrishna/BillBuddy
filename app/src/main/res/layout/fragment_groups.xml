@@ -35,7 +35,9 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/cardview_group"
+        android:layout_above="@id/btnRefresh2_group">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/groupsList"

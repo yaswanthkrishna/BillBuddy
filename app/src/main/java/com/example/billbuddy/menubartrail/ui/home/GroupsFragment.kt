@@ -66,6 +66,7 @@ class GroupsFragment : Fragment() {
         }
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshGroupsList()
+            swipeRefreshLayout.isRefreshing = false
         }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
             tvOverallAmount.text = when {

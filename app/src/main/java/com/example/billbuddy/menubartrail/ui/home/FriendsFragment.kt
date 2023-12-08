@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.billbuddy.R
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
 import com.google.android.material.button.MaterialButton
@@ -45,6 +46,7 @@ class FriendsFragment : Fragment() {
         rvFriends = view.findViewById(R.id.rvFriendsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2)
         btnRefresh = view.findViewById(R.id.btnRefresh2)
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.refreshLayout)
 
         // Set up RecyclerView
         rvFriends.layoutManager = LinearLayoutManager(requireContext())
@@ -53,6 +55,11 @@ class FriendsFragment : Fragment() {
         // Refresh data
         btnRefresh.setOnClickListener {
             viewModel.refreshFriendsList()
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.refreshFriendsList()
+            swipeRefreshLayout.isRefreshing = false
         }
 
         // Observe LiveData

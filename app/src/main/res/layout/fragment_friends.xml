@@ -31,16 +31,22 @@
 
     </androidx.cardview.widget.CardView>
     <!-- Replacing ListView with RecyclerView -->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFriendsList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="485dp"
-        android:layout_above="@id/btnRefresh2"
+        android:layout_height="match_parent"
         android:layout_below="@id/cardview"
-        android:layout_marginTop="7dp"
-        android:layout_marginBottom="22dp"
-        android:clickable="true"/>
+        android:layout_above="@id/btnRefresh2">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFriendsList"
+            android:layout_width="match_parent"
+            android:layout_height="485dp"
+            android:layout_above="@id/btnRefresh2"
+            android:layout_below="@id/cardview"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="22dp"
+            android:clickable="true"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/btnRefresh2"
