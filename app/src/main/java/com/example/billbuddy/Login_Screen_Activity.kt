@@ -37,35 +37,46 @@ class Login_Screen_Activity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Inside your onCreate method
         binding.btnDoneLogin.setOnClickListener {
             val email = binding.etEmail.editText?.text.toString()
             val password = binding.etPassword.editText?.text.toString()
 
-            userViewModel.getUserList().observe(this, Observer {
-                for (i in it) {
-                    if (i.email == email && i.password == password) {
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Email and password are required", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            userViewModel.getUserList().observe(this, Observer { userList ->
+                var isUserAuthenticated = false
+
+                for (user in userList) {
+                    if (user.email == email && user.password == password) {
+                        isUserAuthenticated = true
                         val intent2 = Intent(this, FragmentMainActivity::class.java)
-                        intent2.putExtra("name", i.name)
+                        intent2.putExtra("name", user.name)
                         preferenceHelper.writeLongToPreference(
                             SplitwiseApplication.PREF_USER_ID,
-                            i.user_id!!
+                            user.user_id!!
                         )
                         preferenceHelper.writeBooleanToPreference(
                             SplitwiseApplication.PREF_IS_USER_LOGIN,
                             true
                         )
-                        preferenceHelper.writeStringToPreference("USER_NAME", i.name)
-                        preferenceHelper.writeStringToPreference("USER_EMAIL", i.email)
+                        preferenceHelper.writeStringToPreference("USER_NAME", user.name)
+                        preferenceHelper.writeStringToPreference("USER_EMAIL", user.email)
                         startActivity(intent2)
                         finish()
                         break
-                    } else {
-                        Toast.makeText(this, "Email or Password is wrong", Toast.LENGTH_SHORT)
-                            .show()
                     }
+                }
+
+                if (!isUserAuthenticated) {
+                    Toast.makeText(this, "Email or Password is incorrect", Toast.LENGTH_SHORT).show()
                 }
             })
         }
+
     }
 
     private fun createDatabase() {

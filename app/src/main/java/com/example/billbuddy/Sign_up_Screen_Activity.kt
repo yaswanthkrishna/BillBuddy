@@ -38,31 +38,49 @@ class Sign_up_Screen_Activity : AppCompatActivity() {
             finish()
         }
 
+        // Inside your onCreate method
         binding.btnDoneSign.setOnClickListener {
-            if (binding.etSignUpFullName.editText?.text!!.isNotEmpty() &&
-                binding.etSignUpEmail.editText?.text!!.isNotEmpty() &&
-                binding.etSignUpPassword.editText?.text!!.isNotEmpty()
-            ) {
+            val fullName = binding.etSignUpFullName.editText?.text.toString()
+            val phone = binding.etSignUpPhone.editText?.text.toString()
+            val email = binding.etSignUpEmail.editText?.text.toString()
+            val password = binding.etSignUpPassword.editText?.text.toString()
 
-                createDatabase()
-                val userEntity = UserEntity(
-                    name=binding.etSignUpFullName.editText?.text!!.toString(),
-                    phone=binding.etSignUpPhone.editText?.text!!.toString(),
-                    email=binding.etSignUpEmail.editText?.text!!.toString(),
-                    password=binding.etSignUpPassword.editText?.text!!.toString(),
-                    gender="",
-                    owe="0",
-                    owes="0"
-                )
+            if (fullName.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Fill in all the fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                userViewModel.addUser(userEntity)
+            // Check if the email follows a valid pattern
+            if (!isValidEmail(email)) {
+                Toast.makeText(this, "Enter a valid email address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                val intent2 = Intent(this, Login_Screen_Activity::class.java)
-                intent2.putExtra("email", userEntity.email)
-                startActivity(intent2)
-                finish()
-            } else Toast.makeText(this, "fill all the fields", Toast.LENGTH_SHORT).show()
+            createDatabase()
+
+            val userEntity = UserEntity(
+                name = fullName,
+                phone = phone,
+                email = email,
+                password = password,
+                gender = "",
+                owe = "0",
+                owes = "0"
+            )
+
+            userViewModel.addUser(userEntity)
+
+            val intent2 = Intent(this, Login_Screen_Activity::class.java)
+            intent2.putExtra("email", userEntity.email)
+            startActivity(intent2)
+            finish()
         }
+
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+        return email.matches(emailPattern.toRegex())
     }
 
     private fun createDatabase() {
