@@ -43,12 +43,7 @@
         <activity
             android:name=".vinayactivity.AddExpenseActivity"
             android:exported="false" />
-        <activity
-            android:name=".WelcomeScreenActivity"
-            android:exported="false" />
-        <activity
-            android:name=".FirstScreen"
-            android:exported="false" />
+
         <activity
             android:name=".vinayactivity.AddFriendActivity"
             android:exported="false" />
