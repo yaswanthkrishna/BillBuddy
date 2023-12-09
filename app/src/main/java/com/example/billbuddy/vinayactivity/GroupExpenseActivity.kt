@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.Editable
@@ -28,7 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -1003,20 +1001,5 @@ class GroupExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSel
             }
         }
     }
-    override fun onResume() {
-        super.onResume()
-        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
-    }
-    override fun onPause() {
-        super.onPause()
-        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
-    }
-    @Override
-    override fun onBackPressed() {
-        super.onBackPressed()
-        // Start MenuMainActivity and finish current activity
-        val intent = Intent(this, MenuMainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
+
 }

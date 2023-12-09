@@ -71,12 +71,10 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("com.google.firebase:firebase-inappmessaging-ktx:20.4.0") // Corrected the dependency name
-    implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2") // Corrected the dependency name
     kapt("com.github.bumptech.glide:compiler:4.13.0") // Use kapt for annotation processor
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1") // Use kapt for annotation processor
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.0")
+    kapt("androidx.room:room-compiler:2.6.0") // Use kapt for annotation processor
+    implementation("androidx.room:room-ktx:2.6.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
@@ -106,7 +104,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation ("com.airbnb.android:lottie-compose:6.2.0")
     implementation("androidx.core:core-ktx:1.12.0")
@@ -114,13 +112,13 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.activity:activity-ktx:1.8.1")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.8.1")
-    implementation("com.squareup.okhttp3:okhttp:4.8.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.7.2")
+    implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")

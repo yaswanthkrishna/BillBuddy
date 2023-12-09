@@ -17,7 +17,7 @@ import com.example.billbuddy.vinay.views.SplitwiseApplication
 class Login_Screen_Activity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginScreenBinding
     private lateinit var userViewModel: UserViewModel
-    private lateinit var preferenceHelper: PreferenceHelper // Declare it as lateinit
+    private val preferenceHelper = PreferenceHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,10 +25,11 @@ class Login_Screen_Activity : AppCompatActivity() {
 
         binding = ActivityLoginScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        preferenceHelper = PreferenceHelper(this)
+
         if (intent.getStringExtra("email").toString() != "null") {
             binding.etEmail.editText?.setText(intent.getStringExtra("email").toString())
         }
+
         createDatabase()
 
         binding.btnBackLogin.setOnClickListener {
@@ -53,9 +54,6 @@ class Login_Screen_Activity : AppCompatActivity() {
                             SplitwiseApplication.PREF_IS_USER_LOGIN,
                             true
                         )
-                        // Inside Login_Screen_Activity, after successful login:
-                        preferenceHelper.writeBooleanToPreference(SplitwiseApplication.PREF_IS_USER_LOGIN, true)
-                        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", "Login_Screen_Activity")
                         preferenceHelper.writeStringToPreference("USER_NAME", i.name)
                         preferenceHelper.writeStringToPreference("USER_EMAIL", i.email)
                         startActivity(intent2)

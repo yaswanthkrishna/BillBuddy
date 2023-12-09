@@ -21,6 +21,7 @@ class TransactionDetailFragment : Fragment() {
     private lateinit var transaction: TransactionEntity
     private lateinit var userDao: UserDAO
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     companion object {
         private const val TRANSACTION_KEY = "transaction"
         fun newInstance(transaction: TransactionEntity): TransactionDetailFragment {
@@ -31,37 +32,35 @@ class TransactionDetailFragment : Fragment() {
             return fragment
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         transaction = arguments?.getSerializable(TRANSACTION_KEY) as TransactionEntity
         userDao = SplitwiseDatabase.getDatabase(requireContext()).getMyUserEntries()
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTransactionDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupTransactionDetails()
-        setupListeners()
-    }
-    private fun setupTransactionDetails() {
         binding.textViewTransactionId.text = "Transaction ID: ${transaction.transactionId}"
         binding.textViewAmount.text = "Amount: ${transaction.totalAmount}"
         binding.textViewDate.text = "Date: ${transaction.transactionDateTime}"
         binding.textViewComments.text = "Comments: ${transaction.comments}"
         binding.textViewNotes.text = "Notes: ${transaction.notes}"
+
         transaction.receiptImage?.let {
             Glide.with(this).load(it).into(binding.imageViewReceipt)
         }
         binding.imageViewReceipt.setOnTouchListener(CustomTouchListener(requireContext()))
-        fetchAdditionalDetails(transaction)
-    }
-    private fun setupListeners() {
         binding.fabAddComment.setOnClickListener {
             Log.d("TransactionDetail", "Add comment button clicked")
             showAddCommentDialog()
         }
+        fetchAdditionalDetails(transaction)
     }
     private fun getCurrentUserId(): Long {
         val sharedPreferences = requireActivity().getSharedPreferences("YourPreferenceName", Context.MODE_PRIVATE)
@@ -71,16 +70,20 @@ class TransactionDetailFragment : Fragment() {
         coroutineScope.launch {
             val preferenceHelper = PreferenceHelper(requireContext())
             val email = preferenceHelper.readStringFromPreference("USER_EMAIL")
+
             val userId = withContext(Dispatchers.IO) {
                 userDao.getUserIdByEmail(email)
             }
+
             userId?.let {
                 val userName = withContext(Dispatchers.IO) {
                     userDao.getUserNameById(it)
                 }
+
                 val commentEditText = EditText(context).apply {
                     hint = "Enter comment"
                 }
+
                 AlertDialog.Builder(requireContext())
                     .setTitle("Add Comment")
                     .setView(commentEditText)
@@ -93,46 +96,33 @@ class TransactionDetailFragment : Fragment() {
             } ?: Log.e("TransactionDetail", "User ID not found for email: $email")
         }
     }
+
     private fun addCommentToDb(comment: String) {
         coroutineScope.launch(Dispatchers.IO) {
             val updatedTransaction = transaction.copy(comments = "${transaction.comments}\n$comment")
             SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries().updateTransaction(updatedTransaction)
-            withContext(Dispatchers.Main) {
-                setupTransactionDetails()
-            }
         }
     }
+
     private fun fetchAdditionalDetails(transaction: TransactionEntity) {
         coroutineScope.launch {
             val payerName = withContext(Dispatchers.IO) {
                 userDao.getUserNameById(transaction.paidByUserId)
             }
-
-            val involvedMembers = if (transaction.groupFlag) {
-                fetchGroupName(transaction.transactionId)
-            } else {
-                fetchFriendNames(transaction.transactionId, transaction.paidByUserId)
+            val membersDetails = withContext(Dispatchers.IO) {
+                SplitwiseDatabase.getDatabase(requireContext())
+                    .getMyNonGroupTransactionMemberEntries()
+                    .getNonGroupTransactionMembersWithAmounts(transaction.transactionId, transaction.paidByUserId)
             }
+
             withContext(Dispatchers.Main) {
                 binding.textViewPayer.text = "Paid by: $payerName"
+                val involvedMembers = membersDetails.joinToString("\n ") { member ->
+                    "${member.name} - Owe: ${member.amountOwe}"
+                }
                 binding.textViewGroup.text = "Involved: \n$involvedMembers"
             }
         }
-    }
-    private suspend fun fetchFriendNames(transactionId: Long, paidByUserId: Long): String {
-        val membersDetails = SplitwiseDatabase.getDatabase(requireContext())
-            .getMyNonGroupTransactionMemberEntries()
-            .getNonGroupTransactionMembersWithAmounts(transactionId, paidByUserId)
-        return membersDetails.joinToString("\n ") { member ->
-            "${member.name} - Owe: ${member.amountOwe}"
-        }
-    }
-    private suspend fun fetchGroupName(transactionId: Long): String {
-        val groupTransactionDao = SplitwiseDatabase.getDatabase(requireContext()).getMyGroupTransactionEntries()
-        val groupId = groupTransactionDao.getGroupIdByTransactionId(transactionId)
-        return groupId?.let {
-            groupTransactionDao.getGroupNameByGroupId(it) ?: "Unknown Group"
-        } ?: "Unknown Group"
     }
     override fun onDestroyView() {
         super.onDestroyView()

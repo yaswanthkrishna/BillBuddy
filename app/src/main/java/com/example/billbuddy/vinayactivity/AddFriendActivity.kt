@@ -2,7 +2,6 @@ package com.example.billbuddy.vinayactivity
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
@@ -30,7 +29,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.versionedparcelable.VersionedParcelize
 import com.example.billbuddy.R
-import com.example.billbuddy.menubartrail.MenuMainActivity
 import com.example.billbuddy.vinay.database.friend_non_group.FriendEntity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinay.database.users.UserEntity
@@ -372,22 +370,7 @@ class AddFriendActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-    override fun onResume() {
-        super.onResume()
-        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
-    }
-    override fun onPause() {
-        super.onPause()
-        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
-    }
-    @Override
-    override fun onBackPressed() {
-        super.onBackPressed()
-        // Start MenuMainActivity and finish current activity
-        val intent = Intent(this, MenuMainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
+
 }
 
 data class Contact(val name: String, val phoneNumber: String)
