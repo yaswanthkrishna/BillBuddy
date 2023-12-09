@@ -25,7 +25,7 @@ class ConverterFragment : Fragment() {
         _binding = FragmentConverterBinding.inflate(inflater, container, false)
 
         binding.btnConvert.setOnClickListener {
-            onConvertButtonClicked()
+            //onConvertButtonClicked()
         }
 
         val currencyCodes = resources.getStringArray(R.array.currency_codes)
@@ -33,7 +33,7 @@ class ConverterFragment : Fragment() {
         binding.spToCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedCurrency = currencyCodes[position]
-                viewModel.setConvertedToCurrency(selectedCurrency)
+                //viewModel.setConvertedToCurrency(selectedCurrency)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -56,8 +56,8 @@ class ConverterFragment : Fragment() {
         _binding = null
     }
 
-    private fun onConvertButtonClicked() {
+    /*private fun onConvertButtonClicked() {
         val amountStr = binding.etFrom.text.toString()
         viewModel.convertValue(amountStr)
-    }
+    }*/
 }

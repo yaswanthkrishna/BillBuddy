@@ -7,9 +7,9 @@
     </string-array>
 
     <string-array name="currency_array">
+        <item>EUR</item>
         <item>USD</item>
         <item>INR</item>
-        <item>EUR</item>
         <!-- Add more currencies as needed -->
     </string-array>
 
