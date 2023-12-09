@@ -44,7 +44,6 @@ class FriendsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvFriends = view.findViewById(R.id.rvFriendsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2)
-
         // Set up RecyclerView
         rvFriends.layoutManager = LinearLayoutManager(requireContext())
         rvFriends.adapter = FriendsAdapter(emptyList())

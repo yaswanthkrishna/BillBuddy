@@ -58,6 +58,14 @@ class GroupsFragment : Fragment() {
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
         rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
+        rvGroups.adapter = GroupsAdapter(emptyList())
+        viewModel.groupDetailsList.observe(viewLifecycleOwner) { groupDetails ->
+            if (groupDetails != null && groupDetails.isNotEmpty()) {
+                updateList(groupDetails)
+            } else {
+                // Handle empty or null list, e.g., show a message or hide the list
+            }
+        }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
             tvOverallAmount.text = when {
                 total > 0 -> "Total Amount You are Owed: $${total.format(2)}"
