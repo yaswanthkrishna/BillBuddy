@@ -633,7 +633,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
     private suspend fun fetchFriends() {
         // Assume you have a function to get friends from your database
-        delay(100)
+        delay(70)
         val friendsList = getFriendsFromDatabase()
 
         // Convert the friendsList to ContactTempModel
