@@ -357,7 +357,7 @@ class AddFriendActivity : AppCompatActivity() {
         })
     }
 
-    private suspend fun getFriendList(currentUserId: Long, callback: (List<FriendEntity>) -> Unit) {
+    private fun getFriendList(currentUserId: Long, callback: (List<FriendEntity>) -> Unit) {
         friendViewModel.getFriendsList(currentUserId).observe(this) { friends ->
             friendList.clear()
             friends?.let {

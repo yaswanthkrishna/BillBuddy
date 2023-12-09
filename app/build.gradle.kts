@@ -69,7 +69,8 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2") // Corrected the dependency name
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("com.google.firebase:firebase-inappmessaging-ktx:20.4.0") // Corrected the dependency name
     kapt("com.github.bumptech.glide:compiler:4.13.0") // Use kapt for annotation processor
     implementation("androidx.room:room-runtime:2.6.0")
     kapt("androidx.room:room-compiler:2.6.0") // Use kapt for annotation processor

@@ -40,6 +40,12 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
             repository.getUserIdByName(userName)
         }
     }
+
+    fun updateOweById(userId: Long, newOwe: Double) {
+        viewModelScope.launch {
+            repository.updateOweById(userId, newOwe)
+        }
+    }
 }
 
 class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
