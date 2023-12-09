@@ -32,9 +32,6 @@
             android:name=".vinayactivity.SettleUpActivity"
             android:exported="false" />
         <activity
-            android:name=".vinayactivity.SettleUp"
-            android:exported="false" />
-        <activity
             android:name=".vinayactivity.GroupExpenseActivity"
             android:exported="false" />
         <activity
@@ -70,21 +67,25 @@
         <activity
             android:name=".jing.RecentActivity"
             android:exported="false" />
+
         <activity
             android:name=".LoginSignUp"
+            android:exported="false"/>
+        <activity
+            android:name=".jing.FragmentMainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.BillBuddy_Login" />
+        <activity
+            android:name=".LauncherActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.BillBuddy_Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".jing.FragmentMainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/Theme.BillBuddy_Login" />
+
     </application>
 
 </manifest>
