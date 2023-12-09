@@ -80,7 +80,7 @@ class FriendsFragment : Fragment() {
     private fun updateOverallAmountDisplay() {
         val overallAmount = viewModel.calculateOverallAmount()
         tvOverallAmount.text = if (overallAmount == 0.0) "Total Amount: $0.00" else if(overallAmount > 0.0) "Total Owed: $${overallAmount.format(2)}" else "Total Owe: \$${overallAmount.format(2)}"
-        val color = if (overallAmount >= 0) R.color.Dark_green else R.color.colorRed
+        val color = if (overallAmount >= 0) R.color.Dark_green else R.color.orange_splitwise
         tvOverallAmount.setTextColor(ContextCompat.getColor(requireContext(), color))
         viewModel.refreshFriendsList()
     }

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
@@ -21,6 +22,7 @@ class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<F
     inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nameTextView: TextView = view.findViewById(R.id.tvFriendName)
         private val nameAmountView: TextView = view.findViewById(R.id.tvAmount)
+        val randImageView: ImageView = view.findViewById(R.id.rvFriendImage)
         fun bind(friend: Friend) {
             nameTextView.text = friend.name
             if (friend.totalDue >= 0) {
@@ -30,6 +32,17 @@ class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<F
                 nameAmountView.text = "-${friend.totalDue.format(2)}"
                 nameAmountView.setTextColor(Color.RED)
             }
+            // function generates random int and to get random background color.
+            // The foreground icon remains the same
+            val userId = friend.userId
+            val randomInt = ((userId + friend.friendUserId + friend.owes + friend.owe) % 5).toInt()
+            val imageList = listOf(
+                R.drawable.background1, R.drawable.background2,
+                R.drawable.background3, R.drawable.background4,
+                R.drawable.background5, R.drawable.background6)
+            randImageView.setImageResource(R.drawable.ic_person)
+            randImageView.setBackgroundResource(imageList[randomInt])
+            randImageView.background.alpha = 255
         }
     }
     override fun getItemCount(): Int = friends.size

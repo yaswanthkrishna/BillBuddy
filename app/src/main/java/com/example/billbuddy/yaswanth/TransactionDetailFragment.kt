@@ -51,7 +51,7 @@ class TransactionDetailFragment : Fragment() {
         fetchAndDisplayComments()
     }
     private fun setupTransactionDetails() {
-        binding.textViewTransactionId.text = "Transaction ID: ${transaction.transactionId}"
+        binding.textViewTransactionId.text = "Transaction Description: ${transaction.description}"
         binding.textViewAmount.text = "Amount: ${transaction.totalAmount}"
         binding.textViewDate.text = "Date: ${transaction.transactionDateTime}"
         binding.textViewComments.text = "Comments: ${transaction.comments}"
