@@ -21,9 +21,7 @@ import kotlinx.coroutines.withContext
 class FriendsFragment : Fragment() {
     private lateinit var rvFriends: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var btnRefresh: MaterialButton
     private lateinit var viewModel: FriendsViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val database = SplitwiseDatabase.getDatabase(requireContext())
@@ -44,18 +42,8 @@ class FriendsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvFriends = view.findViewById(R.id.rvFriendsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2)
-        btnRefresh = view.findViewById(R.id.btnRefresh2)
-
-        // Set up RecyclerView
         rvFriends.layoutManager = LinearLayoutManager(requireContext())
         rvFriends.adapter = FriendsAdapter(emptyList())
-
-        // Refresh data
-        btnRefresh.setOnClickListener {
-            viewModel.refreshFriendsList()
-        }
-
-        // Observe LiveData
         viewModel.friendsList.observe(viewLifecycleOwner) { friendsList ->
             if (friendsList.isEmpty()) {
                 rvFriends.visibility = View.GONE
@@ -65,14 +53,15 @@ class FriendsFragment : Fragment() {
                 updateOverallAmountDisplay()
             }
         }
-
-        // Initiate data fetch
         getCurrentUserId(arguments?.getString("email") ?: "") { userId ->
             viewModel.updateUserId(userId)
             viewModel.refreshFriendsList()
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshFriendsList()
+    }
     private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val userId = SplitwiseDatabase.getDatabase(requireContext()).getMyUserEntries().getUserIdByEmail(email) ?: 0L

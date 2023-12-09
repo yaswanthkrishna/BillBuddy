@@ -36,21 +36,11 @@
         android:id="@+id/groupsList"
         android:layout_width="match_parent"
         android:layout_height="485dp"
-        android:layout_above="@id/btnRefresh2_group"
+        android:layout_above="@id/placeholder_view_group"
         android:layout_below="@id/cardview_group"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="22dp"
         android:clickable="true"/>
-
-    <Button
-        android:id="@+id/btnRefresh2_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/placeholder_view_group"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="3dp"
-        android:layout_marginBottom="-128dp"
-        android:text="Refresh" />
 
     <View
         android:id="@+id/placeholder_view_group"

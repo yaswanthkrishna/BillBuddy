@@ -33,7 +33,6 @@ class HomeFragment : Fragment() {
         }.attach()
         return view
     }
-
     private inner class DashboardPagerAdapter(fragment: Fragment, private val userEmail: String) :
         FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = 2 // We have two fragments
@@ -53,10 +52,9 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
     private fun getEmailFromPreferences(): String {
         val preferenceHelper = PreferenceHelper(requireContext())
         val email = preferenceHelper.readStringFromPreference("USER_EMAIL")
-        return email ?: "" // Return an empty string if email is null
+        return email ?: ""
     }
 }

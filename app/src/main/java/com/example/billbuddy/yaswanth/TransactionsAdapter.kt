@@ -14,7 +14,6 @@ class TransactionsAdapter(
     private val context: Context,
     private val onTransactionClick: (TransactionEntity) -> Unit
 ) : RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
-
     private var transactions: List<TransactionEntity> = listOf()
     fun submitList(transactions: List<TransactionEntity>) {
         Log.d("TransactionsAdapter", "Submitting list: ${transactions.size}")
@@ -37,7 +36,7 @@ class TransactionsAdapter(
         fun bind(transaction: TransactionEntity) {
             textViewDescription.text = transaction.description ?: "No Description"
             textViewAmount.text = "${transaction.totalAmount}"
-            textViewDate.text = transaction.transactionDateTime // Format this date as needed
+            textViewDate.text = transaction.transactionDateTime
             itemView.setOnClickListener { onTransactionClick(transaction) }
         }
     }

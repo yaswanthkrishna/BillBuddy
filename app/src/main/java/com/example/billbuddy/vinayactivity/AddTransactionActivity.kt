@@ -1,12 +1,16 @@
 package com.example.billbuddy.vinayactivity
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.billbuddy.databinding.ActivityAddTransactionBinding
+import com.example.billbuddy.menubartrail.MenuMainActivity
 import com.example.billbuddy.vinay.database.groups.GroupEntity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinay.database.transactions.TransactionEntity
@@ -32,12 +36,24 @@ class AddTransactionActivity : AppCompatActivity() {
     private val preferenceHelper by lazy { PreferenceHelper(this) }
     private lateinit var groupEntity: GroupEntity
     private lateinit var binding: ActivityAddTransactionBinding
-
     override fun onResume() {
         super.onResume()
+        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
         getGroupEntity()
-    }
 
+    }
+    override fun onPause() {
+        super.onPause()
+        preferenceHelper.writeStringToPreference("LAST_ACTIVITY", this::class.java.name)
+    }
+    @Override
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Start MenuMainActivity and finish current activity
+        val intent = Intent(this, MenuMainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     private fun getGroupEntity() {
         groupViewModel.getGroupList().observe(this, Observer {
             for (i in it) {

@@ -5,18 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:padding="16dp">
-
-    <!-- Floating Action Buttons -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="618dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- Title -->
             <TextView
                 android:id="@+id/textViewTransactionDetailsHeading"
                 android:layout_width="wrap_content"
@@ -25,7 +20,6 @@
                 android:text="Transaction Details"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textColor="@color/green" />
-
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,13 +27,10 @@
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp">
-
-                    <!-- Transaction ID -->
                     <TextView
                         android:id="@+id/textViewTransactionId"
                         android:layout_width="wrap_content"
@@ -47,8 +38,6 @@
                         android:layout_alignParentStart="true"
                         android:text="Transaction ID"
                         android:textAppearance="?attr/textAppearanceListItem" />
-
-                    <!-- Paid By -->
                     <TextView
                         android:id="@+id/textViewPayer"
                         android:layout_width="wrap_content"
@@ -56,8 +45,6 @@
                         android:layout_below="@id/textViewTransactionId"
                         android:text="Paid by"
                         android:textAppearance="?attr/textAppearanceListItem" />
-
-                    <!-- Date -->
                     <TextView
                         android:id="@+id/textViewDate"
                         android:layout_width="wrap_content"
@@ -65,8 +52,6 @@
                         android:layout_below="@id/textViewPayer"
                         android:text="Date"
                         android:textAppearance="?attr/textAppearanceListItem" />
-
-                    <!-- Group/Friends -->
                     <TextView
                         android:id="@+id/textViewGroup"
                         android:layout_width="wrap_content"
@@ -74,8 +59,6 @@
                         android:layout_below="@id/textViewDate"
                         android:text="Group/Friends"
                         android:textAppearance="?attr/textAppearanceListItem" />
-
-                    <!-- Amount -->
                     <TextView
                         android:id="@+id/textViewAmount"
                         android:layout_width="wrap_content"
@@ -86,37 +69,30 @@
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-
-
-            <!-- Comments -->
             <TextView
                 android:id="@+id/textViewComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:text="Comments"
-                android:textAppearance="?attr/textAppearanceListItem" />
-
-            <!-- Notes -->
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp" />
             <TextView
                 android:id="@+id/textViewNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:text="Notes"
-                android:textAppearance="?attr/textAppearanceListItem" />
-            <!-- ImageView for Receipt -->
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginBottom="8dp" />
             <ImageView
                 android:id="@+id/imageViewReceipt"
                 android:layout_width="match_parent"
-                android:layout_height="305dp"
-                android:layout_margin="8dp"
-                android:scaleType="matrix"
-                android:src="@drawable/ic_placeholder" />
-
+                android:layout_height="180dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_placeholder"
+                android:layout_marginBottom="16dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_comment"
         android:layout_width="wrap_content"
@@ -125,5 +101,4 @@
         android:layout_margin="16dp"
         android:src="@drawable/comments"
         app:backgroundTint="@color/green" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
