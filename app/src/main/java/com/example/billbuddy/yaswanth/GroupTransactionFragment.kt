@@ -27,7 +27,7 @@ class GroupTransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val transactionDao = SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries()
         viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionDao))[TransactionsViewModel::class.java]
-        transactionsAdapter = TransactionsAdapter(requireContext(),0) { transaction ->
+        transactionsAdapter = TransactionsAdapter(requireContext()) { transaction ->
             openTransactionDetails(transaction)
         }
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_trans)
