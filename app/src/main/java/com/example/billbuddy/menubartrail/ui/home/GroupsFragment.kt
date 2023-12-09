@@ -24,10 +24,6 @@ import kotlinx.coroutines.withContext
 class GroupsFragment : Fragment() {
     private lateinit var rvGroups: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var btnRefresh: MaterialButton
-    private  lateinit var rvGroupImage: ImageView
-    private lateinit var btnRefresh: MaterialButton
-    private  lateinit var rvGroupImage: ImageView
     private lateinit var viewModel: GroupsViewModel
     companion object {
         fun Double.format(digits: Int) = "%.${digits}f".format(this)

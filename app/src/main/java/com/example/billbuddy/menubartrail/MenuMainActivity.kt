@@ -66,7 +66,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_transaction, R.id.nav_Contact
+                R.id.nav_home, R.id.nav_transaction, R.id.nav_settleUp, R.id.nav_Contact
             ), drawerLayout
         )
 

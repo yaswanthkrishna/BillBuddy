@@ -22,10 +22,6 @@ import kotlinx.coroutines.withContext
 class FriendsFragment : Fragment() {
     private lateinit var rvFriends: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var btnRefresh: MaterialButton
-    private lateinit var rvFriendImage : ImageView
-    private lateinit var btnRefresh: MaterialButton
-    private lateinit var rvFriendImage : ImageView
     private lateinit var viewModel: FriendsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
