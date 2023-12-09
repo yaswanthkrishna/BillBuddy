@@ -1,5 +1,6 @@
 package com.example.billbuddy.yaswanth
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,10 @@ import com.example.billbuddy.databinding.FragmentFriendsBinding
 import com.example.billbuddy.databinding.FragmentTransactionsBinding
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
 import com.example.billbuddy.vinay.database.transactions.TransactionEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FriendTransactionFragment : Fragment() {
     private var _binding: FragmentTransactionsBinding? = null
@@ -51,6 +56,7 @@ class FriendTransactionFragment : Fragment() {
             ?.addToBackStack(null)
             ?.commit()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
