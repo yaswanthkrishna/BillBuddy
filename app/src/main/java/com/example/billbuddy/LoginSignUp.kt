@@ -16,16 +16,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.example.billbuddy.databinding.ActivityLogInAndSignUpBinding
 import com.example.billbuddy.menubartrail.MenuMainActivity
-import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.google.android.gms.common.api.ApiException
 
-class LoginSignUp : AppCompatActivity() {
+class LoginSignUp : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityLogInAndSignUpBinding
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var auth: FirebaseAuth
     private val SIGNIN_REQ_CODE = 40
-    private lateinit var preferenceHelper: PreferenceHelper
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +33,31 @@ class LoginSignUp : AppCompatActivity() {
 
         binding = ActivityLogInAndSignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        preferenceHelper = PreferenceHelper(this)
 
         initButtons()
         initData()
-        checkLoginAndRedirect()
     }
 
     private fun initButtons() {
-        binding.btnlogin.setOnClickListener {
-            val intent = Intent(this@LoginSignUp, Login_Screen_Activity::class.java)
-            startActivity(intent)
-        }
-        binding.btnsignup.setOnClickListener {
-            val intent = Intent(this@LoginSignUp, Sign_up_Screen_Activity::class.java)
-            startActivity(intent)
-        }
-        binding.btnsignwithgoogle.setOnClickListener {
-            val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, SIGNIN_REQ_CODE)
+        binding.btnlogin.setOnClickListener(this)
+        binding.btnsignup.setOnClickListener(this)
+        binding.btnsignwithgoogle.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btnlogin -> {
+                val intent = Intent(this@LoginSignUp, Login_Screen_Activity::class.java)
+                startActivity(intent)
+            }
+            R.id.btnsignup -> {
+                val intent = Intent(this@LoginSignUp, Sign_up_Screen_Activity::class.java)
+                startActivity(intent)
+            }
+            R.id.btnsignwithgoogle -> {
+                val signInIntent = googleSignInClient.signInIntent
+                startActivityForResult(signInIntent, SIGNIN_REQ_CODE)
+            }
         }
     }
 
@@ -66,28 +70,6 @@ class LoginSignUp : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
     }
 
-    private fun checkLoginAndRedirect() {
-        val userEmail = preferenceHelper.readStringFromPreference("USER_EMAIL")
-        if (!userEmail.isNullOrEmpty()) {
-            val lastActivityName = preferenceHelper.readActivityFromPreference()
-            if (lastActivityName.isNotEmpty()) {
-                try {
-                    val intent = Intent(this, Class.forName(lastActivityName))
-                    startActivity(intent)
-                    finish()
-                } catch (e: ClassNotFoundException) {
-                    e.printStackTrace()
-                    // Handle the error or redirect to a default activity
-                }
-            } else {
-                val intent = Intent(this, MenuMainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-    }
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -95,8 +77,10 @@ class LoginSignUp : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
+                Log.d("TAG", "firebaseAuthWithGoogle:" + account?.id)
                 firebaseAuthWithGoogle(account?.idToken)
             } catch (e: ApiException) {
+                Log.e("TAG", "Google sign-in failed: ${e.statusCode}")
                 showSnackbar("Google Sign-In Failed. Please try again.")
             }
         }
@@ -111,13 +95,13 @@ class LoginSignUp : AppCompatActivity() {
                     showSnackbar("SignIn successful")
                     updateUI(user)
                 } else {
+                    Log.e("TAG", "Firebase authentication failed: ${task.exception?.message}")
                     showSnackbar("Authentication Failed. Please try again.")
                 }
             }
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        // Update UI after SignIn, example: Redirect to MenuMainActivity
         val intent = Intent(this@LoginSignUp, MenuMainActivity::class.java)
         startActivity(intent)
     }

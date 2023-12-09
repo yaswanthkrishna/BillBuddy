@@ -38,9 +38,5 @@ interface TransactionDAO {
         WHERE ng.transactionId = :transactionId AND u.user_id != :paidByUserId
     """)
     suspend fun getNonGroupTransactionMembers(transactionId: Long, paidByUserId: Long): List<String>
-    @Query("SELECT SUM(Total_amount) FROM Transaction_table WHERE Paid_by_userid = :userId AND Group_flag = 1")
-    suspend fun getTotalSpentOnGroups(userId: Long): Double?
 
-    @Query("SELECT SUM(Total_amount) FROM Transaction_table WHERE Paid_by_userid = :userId AND Group_flag = 0")
-    suspend fun getTotalSpentOnFriends(userId: Long): Double?
 }

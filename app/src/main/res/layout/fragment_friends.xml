@@ -36,11 +36,21 @@
         android:id="@+id/rvFriendsList"
         android:layout_width="match_parent"
         android:layout_height="485dp"
-        android:layout_above="@id/placeholder_view"
+        android:layout_above="@id/btnRefresh2"
         android:layout_below="@id/cardview"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="22dp"
         android:clickable="true"/>
+
+    <Button
+        android:id="@+id/btnRefresh2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/placeholder_view"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="-128dp"
+        android:text="Refresh" />
 
     <View
         android:id="@+id/placeholder_view"
