@@ -29,7 +29,8 @@ interface GroupListDAO {
     @Query("""
     SELECT g.groupId as id, g.group_name as name, 
            COALESCE(SUM(gm.User_owe), 0) as totalOwed, 
-           COALESCE(SUM(gm.Group_owes), 0) as totalOwes
+           COALESCE(SUM(gm.Group_owes), 0) as totalOwes,
+           g.group_category as type
     FROM GroupList_table g
     LEFT JOIN Group_member_table gm ON g.groupId = gm.Group_id AND gm.User_id = :userId
     GROUP BY g.groupId

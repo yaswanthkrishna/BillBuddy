@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@android:color/white"
     android:padding="16dp">
 
     <!-- Floating Action Buttons -->
@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white"
+                app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
 
@@ -46,7 +46,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:text="Transaction ID"
-                        android:textAppearance="?attr/textAppearanceListItem" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <!-- Paid By -->
                     <TextView
@@ -55,7 +57,9 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewTransactionId"
                         android:text="Paid by"
-                        android:textAppearance="?attr/textAppearanceListItem" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <!-- Date -->
                     <TextView
@@ -64,7 +68,9 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewPayer"
                         android:text="Date"
-                        android:textAppearance="?attr/textAppearanceListItem" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <!-- Group/Friends -->
                     <TextView
@@ -73,7 +79,9 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewDate"
                         android:text="Group/Friends"
-                        android:textAppearance="?attr/textAppearanceListItem" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <!-- Amount -->
                     <TextView
@@ -82,11 +90,12 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewGroup"
                         android:text="Amount"
-                        android:textAppearance="?attr/textAppearanceListItem" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-
 
             <!-- Comments -->
             <TextView
@@ -95,7 +104,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="Comments"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
 
             <!-- Notes -->
             <TextView
@@ -104,7 +115,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="Notes"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
             <!-- ImageView for Receipt -->
             <ImageView
                 android:id="@+id/imageViewReceipt"
