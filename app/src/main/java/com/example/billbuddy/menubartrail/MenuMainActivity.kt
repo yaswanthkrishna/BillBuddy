@@ -1,5 +1,7 @@
 package com.example.billbuddy.menubartrail
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -10,6 +12,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -21,6 +24,7 @@ import com.example.billbuddy.Login_Screen_Activity
 import com.example.billbuddy.R
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
+import com.example.billbuddy.vinay.views.SplitwiseApplication
 import com.example.billbuddy.vinayactivity.AddFriendActivity
 import com.example.billbuddy.vinayactivity.CreateGroup
 import com.example.billbuddy.vinayactivity.GroupExpenseActivity
@@ -34,19 +38,17 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var preferenceHelper: PreferenceHelper
-
     private val rotateOpen: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim) }
-
     private val rotateClose: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim) }
-
     private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim) }
-
     private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim) }
-
     private lateinit var floatingActionButton: FloatingActionButton
     private lateinit var floatingActionButton2: FloatingActionButton
     private lateinit var floatingActionButton3: FloatingActionButton// Add this line
-
+    private val fabRotateOpen: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim) }
+    private val fabRotateClose: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim) }
+    private val fabScaleUp: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.scale_up) }
+    private val fabScaleDown: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.scale_down) }
     private var clicked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +83,12 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         floatingActionButton.setOnClickListener {
             // Handle the click event here
             onAddButtonClicked()
+            val startColor = ContextCompat.getColor(this, R.color.purple_700)
+            val middlecolour1 = ContextCompat.getColor(this, R.color.green_2)
+            val middlecolour2 = ContextCompat.getColor(this, R.color.green_1)
+            val endColor = ContextCompat.getColor(this, R.color.colorRed)
+
+            animateBackgroundColor(drawerLayout, startColor,middlecolour1,middlecolour2, endColor)
         }
         floatingActionButton2.setOnClickListener {
             // Handle the click event here
@@ -93,6 +101,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             startActivity(intent)
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -135,6 +144,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private fun logoutUser() {
         // Clear user session data
         preferenceHelper.clearUserSession()
+        preferenceHelper.writeBooleanToPreference(SplitwiseApplication.PREF_IS_USER_LOGIN, false);
 
         // Redirect to the login screen
         val loginIntent = Intent(this, Login_Screen_Activity::class.java)
@@ -161,27 +171,26 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
-    private fun onAddButtonClicked(){
+    private fun onAddButtonClicked() {
+        clicked = !clicked
         setVisibility(clicked)
         setAnimation(clicked)
-        clicked = !clicked
     }
 
-    private fun setAnimation(clicked:Boolean) {
-        if(!clicked){
-            floatingActionButton2.startAnimation(fromBottom)
-            floatingActionButton3.startAnimation(fromBottom)
-            floatingActionButton.startAnimation(rotateOpen)
-        }
-        else{
-            floatingActionButton2.startAnimation(toBottom)
-            floatingActionButton3.startAnimation(toBottom)
-            floatingActionButton.startAnimation(rotateClose)
+    private fun setAnimation(clicked: Boolean) {
+        if (clicked) {
+            floatingActionButton.startAnimation(fabRotateOpen)
+            floatingActionButton2.startAnimation(fabScaleUp)
+            floatingActionButton3.startAnimation(fabScaleUp)
+        } else {
+            floatingActionButton.startAnimation(fabRotateClose)
+            floatingActionButton2.startAnimation(fabScaleDown)
+            floatingActionButton3.startAnimation(fabScaleDown)
         }
     }
 
     private fun setVisibility(clicked: Boolean) {
-        if(!clicked){
+        if(clicked){
             floatingActionButton2.visibility = View.VISIBLE
             floatingActionButton3.visibility = View.VISIBLE
         }
@@ -189,6 +198,20 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             floatingActionButton2.visibility = View.INVISIBLE
             floatingActionButton3.visibility = View.INVISIBLE
         }
-
     }
+    private fun animateBackgroundColor(view: View, startColor: Int,middle1: Int, middle2: Int, endColor: Int) {
+        val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), startColor, middle1)
+        val colorAnimation2 = ValueAnimator.ofObject(ArgbEvaluator(), middle2, endColor)
+        colorAnimation.duration = 2000 // duration in milliseconds (1 second)
+        colorAnimation2.duration = 1000
+        colorAnimation.addUpdateListener { animator ->
+            view.setBackgroundColor(animator.animatedValue as Int)
+        }
+        colorAnimation2.addUpdateListener { animator ->
+            view.setBackgroundColor(animator.animatedValue as Int)
+        }
+        colorAnimation.start()
+        colorAnimation2.start()
+    }
+
 }

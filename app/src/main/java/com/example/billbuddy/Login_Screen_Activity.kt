@@ -13,6 +13,7 @@ import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
 import com.example.billbuddy.vinay.viewmodels.UserViewModel
 import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
 import com.example.billbuddy.vinay.views.SplitwiseApplication
+import com.google.android.play.integrity.internal.i
 
 class Login_Screen_Activity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginScreenBinding
@@ -63,6 +64,8 @@ class Login_Screen_Activity : AppCompatActivity() {
                             SplitwiseApplication.PREF_IS_USER_LOGIN,
                             true
                         )
+                        preferenceHelper.writeBooleanToPreference(SplitwiseApplication.PREF_IS_USER_LOGIN, true);
+
                         preferenceHelper.writeStringToPreference("USER_NAME", user.name)
                         preferenceHelper.writeStringToPreference("USER_EMAIL", user.email)
                         startActivity(intent2)
