@@ -34,7 +34,7 @@ class FriendTransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val transactionDao = SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries()
         viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionDao))[TransactionsViewModel::class.java]
-        transactionsAdapter = TransactionsAdapter(requireContext(),getCurrentUserId()) { transaction ->
+        transactionsAdapter = TransactionsAdapter(requireContext()) { transaction ->
             openTransactionDetails(transaction)
         }
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_trans)
@@ -56,10 +56,7 @@ class FriendTransactionFragment : Fragment() {
             ?.addToBackStack(null)
             ?.commit()
     }
-    private fun getCurrentUserId(): Long {
-        val sharedPreferences = requireActivity().getSharedPreferences("YourPreferenceName", Context.MODE_PRIVATE)
-        return sharedPreferences.getLong("currentUserId", -1) // -1 or any default value indicating no ID was found
-    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
