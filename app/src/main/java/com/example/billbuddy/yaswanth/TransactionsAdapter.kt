@@ -52,7 +52,7 @@ class TransactionsAdapter(
             if (userId == paidBy){
                 transactionImage.setBackgroundResource(R.color.Dark_green)
             }else{
-                transactionImage.setBackgroundResource(R.color.colorRed)
+                transactionImage.setBackgroundResource(R.color.orange_splitwise)
             }
         }
 
