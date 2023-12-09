@@ -29,6 +29,8 @@ import com.example.billbuddy.vinayactivity.AddFriendActivity
 import com.example.billbuddy.vinayactivity.CreateGroup
 import com.example.billbuddy.vinayactivity.GroupExpenseActivity
 import com.example.billbuddy.vinayactivity.SettleUpActivity
+import com.example.billbuddy.yaswanth.ExpenditureActivity
+import com.example.billbuddy.yaswanth.ExpenditureFragment
 import com.example.billbuddy.yaswanth.TransactionsActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -131,6 +133,10 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
             R.id.nav_transaction -> {
                 val intent = Intent(this, TransactionsActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_expenditure -> {
+                val intent = Intent(this, ExpenditureActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_Contact -> {

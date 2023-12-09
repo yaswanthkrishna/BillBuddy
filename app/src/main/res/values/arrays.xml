@@ -12,5 +12,10 @@
         <item>INR</item>
         <!-- Add more currencies as needed -->
     </string-array>
+    <string-array name="time_range_options">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+    </string-array>
 
 </resources>

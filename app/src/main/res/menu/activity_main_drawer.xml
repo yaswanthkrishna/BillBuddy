@@ -18,9 +18,14 @@
             android:title="Settle Up" />
 
         <item
+            android:id="@+id/nav_expenditure"
+            android:icon="@drawable/ic_baseline_qr_code_scanner_24"
+            android:title="Expense_Analysis" />
+        <item
             android:id="@+id/nav_Contact"
             android:icon="@drawable/ic_baseline_login_24"
             android:title="@string/log_out" />
+
 
     </group>
 </menu>

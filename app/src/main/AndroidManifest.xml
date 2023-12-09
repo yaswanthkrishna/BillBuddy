@@ -67,6 +67,9 @@
             android:name=".LoginSignUp"
             android:exported="false"/>
         <activity
+            android:name=".yaswanth.ExpenditureActivity"
+            android:exported="false"/>
+        <activity
             android:name=".jing.FragmentMainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.BillBuddy_Login" />
