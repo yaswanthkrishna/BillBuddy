@@ -373,7 +373,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             }
 
 
-            Toast.makeText(applicationContext, "Friends Added", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Expense Added", Toast.LENGTH_SHORT).show()
 
             binding.lvContacts.visibility = View.GONE
             contactList.clear()
@@ -479,7 +479,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             userViewModel.updateUser(it)
         }
 
-        Toast.makeText(applicationContext, "Friends Added", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "Expense Added", Toast.LENGTH_SHORT).show()
 
         binding.lvContacts.visibility = View.GONE
         contactList.clear()
@@ -599,7 +599,7 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
             userViewModel.updateUser(it)
         }
 
-        Toast.makeText(applicationContext, "Friends Added", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "Expense Added", Toast.LENGTH_SHORT).show()
 
         binding.lvContacts.visibility = View.GONE
         contactList.clear()
