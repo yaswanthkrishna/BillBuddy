@@ -46,4 +46,13 @@ interface TransactionDAO {
 
     @Query("SELECT * FROM Transaction_table WHERE Transaction_id = :transactionId")
     suspend fun getTransactionById(transactionId: Long): TransactionEntity?
+    @Query("SELECT * FROM Transaction_table WHERE Paid_by_userid = :userId AND Transaction_datetime BETWEEN :startDate AND :endDate")
+    fun getTransactionsForUserInRange(userId: Long, startDate: String, endDate: String): LiveData<List<TransactionEntity>>
+
+    @Query("SELECT * FROM Transaction_table WHERE Paid_by_userid = :userId AND Transaction_datetime BETWEEN :startDate AND :endDate")
+    suspend fun getTransactionsForUserInRangeSuspend(userId: Long, startDate: String, endDate: String): List<TransactionEntity>
+
+    @Query("SELECT * FROM Transaction_table WHERE Paid_by_userid != :userId AND Transaction_datetime BETWEEN :startDate AND :endDate")
+    suspend fun getOtherUserTransactionsInRange(userId: Long, startDate: String, endDate: String): List<TransactionEntity>
+
 }
