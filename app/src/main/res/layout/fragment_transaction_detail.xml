@@ -7,10 +7,9 @@
     android:padding="16dp">
 
     <!-- Floating Action Buttons -->
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="633dp">
+        android:layout_height="618dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +32,7 @@
                 android:layout_margin="8dp"
                 app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                app:cardElevation="4dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -45,7 +44,7 @@
                         android:id="@+id/textViewTransactionId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_alignParentStart="true"
                         android:text="Transaction ID"
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:textColor="@android:color/black"
@@ -57,8 +56,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewTransactionId"
-                        android:layout_marginTop="4dp"
                         android:text="Paid by"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <!-- Date -->
+                    <TextView
+                        android:id="@+id/textViewDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewPayer"
+                        android:text="Date"
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
@@ -68,25 +77,11 @@
                         android:id="@+id/textViewGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/textViewPayer"
-                        android:layout_marginTop="12dp"
+                        android:layout_below="@id/textViewDate"
                         android:text="Group/Friends"
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:textColor="@android:color/black"
-                        android:textSize="18sp" />
-
-                    <!-- Date -->
-                    <TextView
-                        android:id="@+id/textViewDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/textViewGroup"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginTop="8dp"
-                        android:text="Date"
-                        android:textAppearance="?attr/textAppearanceListItem"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
+                        android:textSize="16sp" />
 
                     <!-- Amount -->
                     <TextView
@@ -94,18 +89,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/textViewGroup"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="8dp"
                         android:text="Amount"
                         android:textAppearance="?attr/textAppearanceListItem"
-                        android:textColor="@android:color/white"
-                        android:background="@color/green"
-                        android:textSize="20sp" />
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-
-
-
 
             <!-- Comments -->
             <TextView
@@ -132,13 +122,12 @@
             <!-- ImageView for Receipt -->
             <ImageView
                 android:id="@+id/imageViewReceipt"
-                android:layout_width="729dp"
-                android:layout_height="222dp"
+                android:layout_width="match_parent"
+                android:layout_height="305dp"
                 android:layout_margin="8dp"
                 android:scaleType="matrix"
-                android:src="@drawable/ic_placeholder"
-                app:layout_anchor="@+id/fab_add_comment"
-                app:layout_anchorGravity="end|top" />
+                android:src="@drawable/ic_placeholder" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

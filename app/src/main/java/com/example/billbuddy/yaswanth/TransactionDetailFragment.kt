@@ -46,7 +46,7 @@ class TransactionDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textViewTransactionId.text = "Transaction Description: ${transaction.description}"
+        binding.textViewTransactionId.text = "Transaction ID: ${transaction.transactionId}"
         binding.textViewAmount.text = "Amount: ${transaction.totalAmount}"
         binding.textViewDate.text = "Date: ${transaction.transactionDateTime}"
         binding.textViewComments.text = "Comments: ${transaction.comments}"
