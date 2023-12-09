@@ -46,6 +46,11 @@ class TransactionDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTransactionDetails()
+        setupListeners()
+        fetchAndDisplayComments()
+    }
+    private fun setupTransactionDetails() {
         binding.textViewTransactionId.text = "Transaction ID: ${transaction.transactionId}"
         binding.textViewAmount.text = "Amount: ${transaction.totalAmount}"
         binding.textViewDate.text = "Date: ${transaction.transactionDateTime}"
@@ -61,6 +66,22 @@ class TransactionDetailFragment : Fragment() {
             showAddCommentDialog()
         }
         fetchAdditionalDetails(transaction)
+    }
+    private fun fetchAndDisplayComments() {
+        coroutineScope.launch(Dispatchers.IO) {
+            val updatedTransaction = SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries().getTransactionById(transaction.transactionId)
+            updatedTransaction?.let { transaction ->
+                withContext(Dispatchers.Main) {
+                    binding.textViewComments.text = "Comments: ${transaction.comments}"
+                }
+            }
+        }
+    }
+    private fun setupListeners() {
+        binding.fabAddComment.setOnClickListener {
+            Log.d("TransactionDetail", "Add comment button clicked")
+            showAddCommentDialog()
+        }
     }
     private fun getCurrentUserId(): Long {
         val sharedPreferences = requireActivity().getSharedPreferences("YourPreferenceName", Context.MODE_PRIVATE)
@@ -101,7 +122,11 @@ class TransactionDetailFragment : Fragment() {
         coroutineScope.launch(Dispatchers.IO) {
             val updatedTransaction = transaction.copy(comments = "${transaction.comments}\n$comment")
             SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries().updateTransaction(updatedTransaction)
+            withContext(Dispatchers.Main) {
+                setupTransactionDetails()
+            }
         }
+        fetchAndDisplayComments()
     }
 
     private fun fetchAdditionalDetails(transaction: TransactionEntity) {
@@ -109,20 +134,33 @@ class TransactionDetailFragment : Fragment() {
             val payerName = withContext(Dispatchers.IO) {
                 userDao.getUserNameById(transaction.paidByUserId)
             }
-            val membersDetails = withContext(Dispatchers.IO) {
-                SplitwiseDatabase.getDatabase(requireContext())
-                    .getMyNonGroupTransactionMemberEntries()
-                    .getNonGroupTransactionMembersWithAmounts(transaction.transactionId, transaction.paidByUserId)
+            val involvedMembers = if (transaction.groupFlag) {
+                fetchGroupName(transaction.transactionId)
+            } else {
+                fetchFriendNames(transaction.transactionId, transaction.paidByUserId)
             }
 
             withContext(Dispatchers.Main) {
                 binding.textViewPayer.text = "Paid by: $payerName"
-                val involvedMembers = membersDetails.joinToString("\n ") { member ->
-                    "${member.name} - Owe: ${member.amountOwe}"
-                }
+
                 binding.textViewGroup.text = "Involved: \n$involvedMembers"
             }
         }
+    }
+    private suspend fun fetchFriendNames(transactionId: Long, paidByUserId: Long): String {
+        val membersDetails = SplitwiseDatabase.getDatabase(requireContext())
+            .getMyNonGroupTransactionMemberEntries()
+            .getNonGroupTransactionMembersWithAmounts(transactionId, paidByUserId)
+        return membersDetails.joinToString("\n ") { member ->
+            "${member.name} - Owe: ${member.amountOwe}"
+        }
+    }
+    private suspend fun fetchGroupName(transactionId: Long): String {
+        val groupTransactionDao = SplitwiseDatabase.getDatabase(requireContext()).getMyGroupTransactionEntries()
+        val groupId = groupTransactionDao.getGroupIdByTransactionId(transactionId)
+        return groupId?.let {
+            groupTransactionDao.getGroupNameByGroupId(it) ?: "Unknown Group"
+        } ?: "Unknown Group"
     }
     override fun onDestroyView() {
         super.onDestroyView()

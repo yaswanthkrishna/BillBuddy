@@ -17,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.billbuddy.Login_Screen_Activity
 import com.example.billbuddy.R
 import com.example.billbuddy.vinayactivity.AddExpenseActivity
 import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
@@ -123,11 +124,23 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 val intent = Intent(this, TransactionsActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_Contact -> {
+                logoutUser()
+                return true
+            }
         }
         return true
     }
 
+    private fun logoutUser() {
+        // Clear user session data
+        preferenceHelper.clearUserSession()
 
+        // Redirect to the login screen
+        val loginIntent = Intent(this, Login_Screen_Activity::class.java)
+        startActivity(loginIntent)
+        finish() // Close the current activity
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_addfriend -> {

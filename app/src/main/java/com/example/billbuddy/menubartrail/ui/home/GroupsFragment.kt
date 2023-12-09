@@ -23,7 +23,6 @@ import kotlinx.coroutines.withContext
 class GroupsFragment : Fragment() {
     private lateinit var rvGroups: RecyclerView
     private lateinit var tvOverallAmount: TextView
-    private lateinit var btnRefresh: MaterialButton
     private lateinit var viewModel: GroupsViewModel
     companion object {
         fun Double.format(digits: Int) = "%.${digits}f".format(this)
@@ -56,11 +55,15 @@ class GroupsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGroups = view.findViewById(R.id.groupsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
-        btnRefresh = view.findViewById(R.id.btnRefresh2_group)
         rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
-        btnRefresh.setOnClickListener {
-            viewModel.refreshGroupsList()
+        rvGroups.adapter = GroupsAdapter(emptyList())
+        viewModel.groupDetailsList.observe(viewLifecycleOwner) { groupDetails ->
+            if (groupDetails != null && groupDetails.isNotEmpty()) {
+                updateList(groupDetails)
+            } else {
+                // Handle empty or null list, e.g., show a message or hide the list
+            }
         }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
             tvOverallAmount.text = when {
@@ -76,6 +79,10 @@ class GroupsFragment : Fragment() {
                 // Handle empty or null list, e.g., show a message or hide the list
             }
         }
+        viewModel.refreshGroupsList()
+    }
+    override fun onResume() {
+        super.onResume()
         viewModel.refreshGroupsList()
     }
     private fun updateList(groups: List<GroupDetail>) {
