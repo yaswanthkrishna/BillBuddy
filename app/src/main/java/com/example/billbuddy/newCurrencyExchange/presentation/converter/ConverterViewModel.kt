@@ -1,5 +1,6 @@
 package com.example.billbuddy.newCurrencyExchange.presentation.converter
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,7 @@ class ConverterViewModel : ViewModel() {
 
     private val _convertedToCurrency = MutableLiveData("USD")
 
-    private val _conversionRate = MutableLiveData<Double?>()
+    val _conversionRate = MutableLiveData<Double?>()
 
     private val _convertedValue = MutableLiveData<String>()
     val convertedValue: LiveData<String> get() = _convertedValue
@@ -21,12 +22,12 @@ class ConverterViewModel : ViewModel() {
 
     private val currencyConverter = CurrencyConverter()
 
-    fun setConvertedToCurrency(currency: String) {
+    fun setConvertedToCurrency(currency: String,amount:String) {
         _convertedToCurrency.value = currency
-        fetchConversionRate()
+        fetchConversionRate(amount)
     }
 
-    private fun fetchConversionRate() {
+    fun fetchConversionRate(amount:String) {
         val convertedToCurrency = _convertedToCurrency.value
 
         if (!convertedToCurrency.isNullOrEmpty()) {
@@ -35,6 +36,9 @@ class ConverterViewModel : ViewModel() {
                     val conversionRate = currencyConverter.convertCurrency(convertedToCurrency)
                     if (conversionRate != null) {
                         _conversionRate.value = conversionRate
+                        Log.d("fetchConversionRate_conversionRate",_conversionRate.value.toString())
+                        // Call convertValue only after conversionRate is set
+                        convertValue(amount)  // Pass a default amount for testing
                     } else {
                         _errorMessage.value = "Currency conversion failed."
                     }
@@ -48,7 +52,10 @@ class ConverterViewModel : ViewModel() {
     fun convertValue(amountStr: String?) {
         if (!amountStr.isNullOrEmpty()) {
             val amount = amountStr.toDouble()
+            Log.d("conversionRateamount","$amount")
+            Log.d("conversionRate_conversionRate",_conversionRate.value.toString())
             val conversion = amount * (_conversionRate.value ?: 0.0)
+            Log.d("conversionRateconversion","$conversion")
             _convertedValue.value = conversion.toString()
         } else {
             _errorMessage.value = "Please enter an amount"
