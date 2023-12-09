@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_baseline_home_24"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_transaction"
-            android:icon="@drawable/ic_baseline_settings_24"
-            android:title="@string/Transactions" />
+            android:id="@+id/nav_settleUp"
+            android:icon="@drawable/settleup"
+            android:title="Settle Up" />
 
         <item
             android:id="@+id/nav_Contact"

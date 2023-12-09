@@ -117,6 +117,10 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             R.id.nav_home -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.nav_home)
             }
+            R.id.nav_settleUp-> {
+                val intent = Intent(this, SettleUpActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_transaction -> {
                 val intent = Intent(this, TransactionsActivity::class.java)
                 startActivity(intent)
