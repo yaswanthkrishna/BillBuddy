@@ -1,16 +1,18 @@
 package com.example.billbuddy.menubartrail.ui.home
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.R
 import com.example.billbuddy.menubartrail.ui.home.GroupsFragment.Companion.format
 
-class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
+class FriendsAdapter(private val context: Context, private var friends: List<Friend>) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
         return FriendViewHolder(view)
@@ -27,7 +29,7 @@ class FriendsAdapter(private var friends: List<Friend>) : RecyclerView.Adapter<F
             nameTextView.text = friend.name
             if (friend.totalDue >= 0) {
                 nameAmountView.text = "${friend.totalDue.format(2)}"
-                nameAmountView.setTextColor(Color.GREEN)
+                nameAmountView.setTextColor(ContextCompat.getColor(context,R.color.green_2))
             } else {
                 nameAmountView.text = "-${friend.totalDue.format(2)}"
                 nameAmountView.setTextColor(Color.RED)

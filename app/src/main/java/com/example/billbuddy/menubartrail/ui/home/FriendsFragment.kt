@@ -49,7 +49,7 @@ class FriendsFragment : Fragment() {
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2)
         // Set up RecyclerView
         rvFriends.layoutManager = LinearLayoutManager(requireContext())
-        rvFriends.adapter = FriendsAdapter(emptyList())
+        rvFriends.adapter = FriendsAdapter(requireContext(),emptyList())
 
         // Observe LiveData
         viewModel.friendsList.observe(viewLifecycleOwner) { friendsList ->
