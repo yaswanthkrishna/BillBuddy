@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ class FriendsFragment : Fragment() {
     private lateinit var rvFriends: RecyclerView
     private lateinit var tvOverallAmount: TextView
     private lateinit var btnRefresh: MaterialButton
+    private lateinit var rvFriendImage : ImageView
     private lateinit var viewModel: FriendsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +73,7 @@ class FriendsFragment : Fragment() {
             viewModel.updateUserId(userId)
             viewModel.refreshFriendsList()
         }
+
     }
 
     private fun getCurrentUserId(email: String, callback: (Long) -> Unit) {
