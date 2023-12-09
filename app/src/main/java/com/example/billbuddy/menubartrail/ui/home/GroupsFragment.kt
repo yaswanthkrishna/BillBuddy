@@ -67,9 +67,9 @@ class GroupsFragment : Fragment() {
         }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
             tvOverallAmount.text = when {
-                total > 0 -> "Total Amount You are Owed: $${total.format(2)}"
-                total < 0 -> "Total Amount You Owe: -\$${total.format(2)}"
-                else -> "Total Amount: $0.00"
+                total > 0 -> "Total Amount You are Owed: ${total.format(2)}"
+                total < 0 -> "Total Amount You Owe: -\${total.format(2)}"
+                else -> "Total Amount: 0.00"
             }
         }
         viewModel.groupDetailsList.observe(viewLifecycleOwner) { groupDetails ->

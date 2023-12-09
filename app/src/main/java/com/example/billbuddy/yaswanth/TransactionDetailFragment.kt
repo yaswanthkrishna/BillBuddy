@@ -81,6 +81,7 @@ class TransactionDetailFragment : Fragment() {
         binding.fabAddComment.setOnClickListener {
             Log.d("TransactionDetail", "Add comment button clicked")
             showAddCommentDialog()
+            fetchAndDisplayComments()
         }
     }
     private fun getCurrentUserId(): Long {
@@ -95,12 +96,10 @@ class TransactionDetailFragment : Fragment() {
             val userId = withContext(Dispatchers.IO) {
                 userDao.getUserIdByEmail(email)
             }
-
             userId?.let {
                 val userName = withContext(Dispatchers.IO) {
                     userDao.getUserNameById(it)
                 }
-
                 val commentEditText = EditText(context).apply {
                     hint = "Enter comment"
                 }
@@ -116,6 +115,7 @@ class TransactionDetailFragment : Fragment() {
                     .show()
             } ?: Log.e("TransactionDetail", "User ID not found for email: $email")
         }
+        fetchAndDisplayComments()
     }
 
     private fun addCommentToDb(comment: String) {
@@ -123,7 +123,7 @@ class TransactionDetailFragment : Fragment() {
             val updatedTransaction = transaction.copy(comments = "${transaction.comments}\n$comment")
             SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries().updateTransaction(updatedTransaction)
             withContext(Dispatchers.Main) {
-                setupTransactionDetails()
+                fetchAndDisplayComments()
             }
         }
         fetchAndDisplayComments()

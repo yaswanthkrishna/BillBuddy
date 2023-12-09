@@ -23,7 +23,7 @@ class LauncherActivity : AppCompatActivity() {
             startActivity(intent)
         } else {
             Log.d("LauncherActivity", "User ID is 0, redirecting to Login_Screen_Activity")
-            val intent = Intent(this, Login_Screen_Activity::class.java)
+            val intent = Intent(this, LoginSignUp::class.java)
             startActivity(intent)
         }
         finish() // Make sure this activity is removed from the back stack
