@@ -56,12 +56,8 @@ class GroupsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGroups = view.findViewById(R.id.groupsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
-        btnRefresh = view.findViewById(R.id.btnRefresh2_group)
         rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
-        btnRefresh.setOnClickListener {
-            viewModel.refreshGroupsList()
-        }
         viewModel.totalAmount.observe(viewLifecycleOwner) { total ->
             tvOverallAmount.text = when {
                 total > 0 -> "Total Amount You are Owed: $${total.format(2)}"
