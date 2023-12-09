@@ -29,6 +29,9 @@ interface UserDAO {
     @Query("SELECT name FROM user_table WHERE user_id = :userId")
     suspend fun getUserNameById(userId: Long): String
 
+    @Query("UPDATE user_table SET owe =owe+ :newOwe WHERE user_id = :userId")
+    suspend fun updateOweById(userId: Long, newOwe: Double)
+
     data class NameAndPhone(val name: String, val phone: String)
 
 }

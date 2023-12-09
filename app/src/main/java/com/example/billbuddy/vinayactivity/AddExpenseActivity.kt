@@ -282,110 +282,107 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleEquallySplit(totalAmount: Double, dtf: DateTimeFormatter) {
         // Add currentUser to contactList
-        val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
-        currentUser?.let {
-            val currentUserModel = ContactTempModel(it.phone, it.name ?: "")
-            contactList.add(currentUserModel)
-        }
-
-        val numberOfPeople = contactList.size
-        val eachShare = totalAmount / numberOfPeople
-
-        val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
-            // If Paidby is "You," use the current user's name
-            currentUser?.name ?: ""
-        } else {
-            // Otherwise, use the name in the TextView
-            binding.paidbywho.text.toString()
-        }
-
-
-        var nextTransactionId = transactionRepository.getNextTransactionId()
-
-        if(nextTransactionId==null){
-            nextTransactionId=1
-        }
-        Log.d("nextTransactionId","$nextTransactionId")
-
-
-        val transactionEntity = TransactionEntity(
-            transactionId = nextTransactionId ?: 0L,
-            totalAmount = totalAmount,
-            paidByUserId = userViewModel.getUserIdByName(payerName) ?: 0L,
-            splitType = binding.splittype.selectedItem.toString(),
-            groupFlag = false,
-            receiptImage = image_path ?: "",
-            comments = null,
-            description = binding.tvDescription.text.toString(),
-            transactionDateTime = dtf.format(LocalDateTime.now()),
-            notes = notes ?: ""
-        )
-
-        // Insert the TransactionEntity
-        transactionViewModel.addTransaction(transactionEntity)
-
-        for (i in contactList) {
-            var amountOwes = 0.0
-            var amountOwe = 0.0
-
-            if(i.name==payerName){
-                amountOwes = totalAmount - eachShare
+            val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
+            currentUser?.let {
+                val currentUserModel = ContactTempModel(it.phone, it.name ?: "")
+                contactList.add(currentUserModel)
             }
-            else{
-                amountOwe=eachShare
+
+            val numberOfPeople = contactList.size
+            val eachShare = totalAmount / numberOfPeople
+
+            val payerName = if (binding.paidbywho.text.toString().equals("You", ignoreCase = true)) {
+                // If Paidby is "You," use the current user's name
+                currentUser?.name ?: ""
+            } else {
+                // Otherwise, use the name in the TextView
+                binding.paidbywho.text.toString()
             }
-            val nonGroupTransactionMemberEntity = NonGroupTransactionMemberEntity(
+
+
+            var nextTransactionId = transactionRepository.getNextTransactionId()
+
+            if(nextTransactionId==null){
+                nextTransactionId=1
+            }
+            Log.d("nextTransactionId","$nextTransactionId")
+
+
+            val transactionEntity = TransactionEntity(
                 transactionId = nextTransactionId ?: 0L,
-                userId = userViewModel.getUserIdByName(i.name ?: "") ?: 0L,
-                amountOwe = amountOwe,
-                amountOwes = amountOwes
+                totalAmount = totalAmount,
+                paidByUserId = userViewModel.getUserIdByName(payerName) ?: 0L,
+                splitType = binding.splittype.selectedItem.toString(),
+                groupFlag = false,
+                receiptImage = image_path ?: "",
+                comments = null,
+                description = binding.tvDescription.text.toString(),
+                transactionDateTime = dtf.format(LocalDateTime.now()),
+                notes = notes ?: ""
             )
 
-            // Insert the NonGroupTransactionMemberEntity
-            nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
+            // Insert the TransactionEntity
+            transactionViewModel.addTransaction(transactionEntity)
 
-            if (currentUser != null) {
-                val frienduserid = userViewModel.getUserIdByName(i.name ?: "") ?: 0L
-                if(payerName==currentUser.name){
-                    friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amountOwe)
-                    friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+            for (i in contactList) {
+                var amountOwes = 0.0
+                var amountOwe = 0.0
+
+                if(i.name==payerName){
+                    amountOwes = totalAmount - eachShare
                 }
                 else{
-                    if(i.name==payerName){
-                        Log.d("currentfriends","inner:False $amountOwes")
-                        Log.d("currentfriends","userid:$currentUser.user_id , frienduserid: $frienduserid")
-                        friendViewModel.updateOweAmount(currentUser.user_id, frienduserid, eachShare)
+                    amountOwe=eachShare
+                }
+                val nonGroupTransactionMemberEntity = NonGroupTransactionMemberEntity(
+                    transactionId = nextTransactionId ?: 0L,
+                    userId = userViewModel.getUserIdByName(i.name ?: "") ?: 0L,
+                    amountOwe = amountOwe,
+                    amountOwes = amountOwes
+                )
+
+                // Insert the NonGroupTransactionMemberEntity
+                nonGroupTransactionMemberViewModel.addTransactionMember(nonGroupTransactionMemberEntity)
+
+                if (currentUser != null) {
+                    val frienduserid = userViewModel.getUserIdByName(i.name ?: "") ?: 0L
+                    if(payerName==currentUser.name){
+                        friendViewModel.updateOwesAmount(currentUser.user_id, frienduserid, amountOwe)
                         friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                    }
+                    else{
+                        if(i.name==payerName){
+                            Log.d("currentfriends","inner:False $amountOwes")
+                            Log.d("currentfriends","userid:$currentUser.user_id , frienduserid: $frienduserid")
+                            friendViewModel.updateOweAmount(currentUser.user_id, frienduserid, eachShare)
+                            friendViewModel.updateTotalDue(currentUser.user_id, frienduserid)
+                        }
                     }
                 }
             }
-        }
 
-        currentUser?.let {
-            if (payerName==currentUser.name) {
-                // If the payer is the current user, update the owe amount
-                it.owes = (it.owes.toDouble() + (totalAmount - eachShare)).toString()
-            } else {
-                // If the payer is someone else, update the owed amount
-                it.owe = (it.owe.toDouble() + eachShare).toString()
+            currentUser?.let {
+                if (payerName==currentUser.name) {
+                    // If the payer is the current user, update the owe amount
+                    it.owes = (it.owes.toDouble() + (totalAmount - eachShare)).toString()
+                } else {
+                    // If the payer is someone else, update the owed amount
+                    it.owe = (it.owe.toDouble() + eachShare).toString()
+                }
+                userViewModel.updateUser(it)
             }
-            userViewModel.updateUser(it)
-        }
 
 
-        Toast.makeText(applicationContext, "Friends Added", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Friends Added", Toast.LENGTH_SHORT).show()
 
-        binding.lvContacts.visibility = View.GONE
-        contactList.clear()
-        contactAdapter.notifyDataSetChanged()
+            binding.lvContacts.visibility = View.GONE
+            contactList.clear()
+            contactAdapter.notifyDataSetChanged()
 
-        val intent2 = Intent(this, MenuMainActivity::class.java)
-        startActivity(intent2)
-        finish()
-
+            val intent2 = Intent(this, MenuMainActivity::class.java)
+            startActivity(intent2)
+            finish()
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleUnequallySplit(totalAmount: Double, dtf: DateTimeFormatter) {

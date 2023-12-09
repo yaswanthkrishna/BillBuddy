@@ -36,4 +36,10 @@ class UserRepository(val DAO: UserDAO) {
     suspend fun getNameAndPhoneByUserId(userId: Long): UserDAO.NameAndPhone? {
         return DAO.getNameAndPhoneByUserId(userId)
     }
+
+    fun updateOweById(userId: Long, newOwe: Double) {
+        CoroutineScope(Dispatchers.IO).launch {
+            DAO.updateOweById(userId, newOwe)
+        }
+    }
 }

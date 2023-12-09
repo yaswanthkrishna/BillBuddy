@@ -34,6 +34,7 @@
     <string name="privacyPolicy">Privacy Policy :: Spiltwise</string>
     <string name="TermsofService">Terms of Service :: Spiltwise</string>
     <string name="create_a_group">Create a group</string>
+    <string name="SettleUp">Settle up</string>
     <string name="group_name">Group name</string>
     <string name="enter_a_group_name">Enter a group name</string>
     <string name="apartment">Apartment</string>

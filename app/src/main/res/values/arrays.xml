@@ -5,4 +5,12 @@
         <item>Percentage</item>
         <!-- Add more split types as needed -->
     </string-array>
+
+    <string-array name="currency_array">
+        <item>USD</item>
+        <item>INR</item>
+        <item>EUR</item>
+        <!-- Add more currencies as needed -->
+    </string-array>
+
 </resources>
