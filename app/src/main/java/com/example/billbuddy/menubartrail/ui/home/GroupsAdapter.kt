@@ -1,5 +1,6 @@
 package com.example.billbuddy.menubartrail.ui.home
 
+import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.billbuddy.Group
 import com.example.billbuddy.GroupDetail
 import com.example.billbuddy.R
 
-class GroupsAdapter(private var groups: List<GroupDetail>) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
+class GroupsAdapter(private val context: Context, private var groups: List<GroupDetail>) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
     companion object {
         private fun Double.format(digits: Int): String {
             return String.format("%.${digits}f", this)
@@ -34,7 +36,7 @@ class GroupsAdapter(private var groups: List<GroupDetail>) : RecyclerView.Adapte
         val type = group.type
 
         holder.amountTextView.text = if (balance >= 0) {
-            holder.amountTextView.setTextColor(Color.GREEN)
+            holder.amountTextView.setTextColor(ContextCompat.getColor(context,R.color.green_2))
             "$${balance.format(2)}"
         } else {
             holder.amountTextView.setTextColor(Color.RED)

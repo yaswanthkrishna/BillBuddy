@@ -30,6 +30,8 @@
             android:layout_toRightOf="@id/rvborder"
             android:layout_marginStart="30dp"
             android:text="Friend's Name"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
             android:clickable="true"/>
         <TextView
             android:id="@+id/tvAmount"

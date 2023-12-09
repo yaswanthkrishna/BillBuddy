@@ -55,9 +55,9 @@ class GroupsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGroups = view.findViewById(R.id.groupsList)
         tvOverallAmount = view.findViewById(R.id.tvOverallAmount2_group)
-        rvGroups.adapter = GroupsAdapter(viewModel.groupDetailsList.value ?: emptyList())
+        rvGroups.adapter = GroupsAdapter(requireContext(),viewModel.groupDetailsList.value ?: emptyList())
         rvGroups.layoutManager = LinearLayoutManager(requireContext())
-        rvGroups.adapter = GroupsAdapter(emptyList())
+        rvGroups.adapter = GroupsAdapter(requireContext(),emptyList())
         viewModel.groupDetailsList.observe(viewLifecycleOwner) { groupDetails ->
             if (groupDetails != null && groupDetails.isNotEmpty()) {
                 updateList(groupDetails)

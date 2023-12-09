@@ -23,10 +23,7 @@
             android:textColor="#006400"
             android:fontFamily="sans-serif-medium"
             android:textStyle="bold"
-            android:shadowColor="#000"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"
+            android:textColorLink="@color/official_billbuddy_green"
             android:padding="16dp"/>
 
     </androidx.cardview.widget.CardView>
