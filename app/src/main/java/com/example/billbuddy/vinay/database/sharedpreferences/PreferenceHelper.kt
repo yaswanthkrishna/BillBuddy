@@ -29,7 +29,12 @@ class PreferenceHelper(val context: Context) {
         editor.putBoolean(key, value)
         editor.apply()
     }
-
+    fun clearUserSession() {
+        sharedPreference()?.edit()?.apply {
+            clear() // This clears all the data, use remove("USER_ID") if you want to clear specific data
+            apply()
+        }
+    }
     fun readBooleanFromPreference(key: String?): Boolean {
         sharedPreference()
         return sharedPreferences!!.getBoolean(key, true)
