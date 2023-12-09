@@ -5,7 +5,10 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -15,7 +18,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.example.billbuddy.databinding.ActivityLogInAndSignUpBinding
+import com.example.billbuddy.jing.FragmentMainActivity
 import com.example.billbuddy.menubartrail.MenuMainActivity
+import com.example.billbuddy.vinay.database.sharedpreferences.PreferenceHelper
+import com.example.billbuddy.vinay.database.users.UserEntity
+import com.example.billbuddy.vinay.viewmodels.UserViewModel
+import com.example.billbuddy.vinay.viewmodels.UserViewModelFactory
+import com.example.billbuddy.vinay.views.SplitwiseApplication
 import com.google.android.gms.common.api.ApiException
 
 class LoginSignUp : AppCompatActivity(), View.OnClickListener {
@@ -24,6 +33,8 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val SIGNIN_REQ_CODE = 40
     private lateinit var auth: FirebaseAuth
+    private lateinit var userViewModel: UserViewModel
+    private val preferenceHelper = PreferenceHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +45,7 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
         binding = ActivityLogInAndSignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        createDatabase()
         initButtons()
         initData()
     }
@@ -92,14 +104,60 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    showSnackbar("SignIn successful")
-                    updateUI(user)
-                } else {
-                    Log.e("TAG", "Firebase authentication failed: ${task.exception?.message}")
-                    showSnackbar("Authentication Failed. Please try again.")
+                    if (user != null) {
+                        user.getDisplayName()?.let { Log.d("LoginActivity", it) }
+                        user.getEmail()?.let { Log.d("LoginActivity", it) }
+
+                        val userEmail = user.getEmail()
+                        val userName = user.getDisplayName()
+
+                        userViewModel.getUserList().observe(this, Observer { userList ->
+                            var userExists = false
+                            for (i in userList) {
+                                if (i.email == userEmail && i.name == userName) {
+                                    userExists = true
+                                    val intent2 = Intent(this, FragmentMainActivity::class.java)
+                                    intent2.putExtra("name", i.name)
+                                    preferenceHelper.writeLongToPreference(
+                                        SplitwiseApplication.PREF_USER_ID,
+                                        i.user_id!!
+                                    )
+                                    preferenceHelper.writeBooleanToPreference(
+                                        SplitwiseApplication.PREF_IS_USER_LOGIN,
+                                        true
+                                    )
+                                    preferenceHelper.writeStringToPreference("USER_NAME", i.name)
+                                    preferenceHelper.writeStringToPreference("USER_EMAIL", i.email)
+                                    startActivity(intent2)
+                                    finish()
+                                    break
+                                }
+                            }
+
+                            if (!userExists) {
+                                val userEntity = UserEntity(
+                                    name = userName!!,
+                                    phone = "",
+                                    email = userEmail!!,
+                                    password = "",
+                                    gender = "",
+                                    owe = "0",
+                                    owes = "0"
+                                )
+                                userViewModel.addUser(userEntity)
+                            }
+                        })
+
+                        showSnackbar("SignIn successful")
+                        updateUI(user)
+                    } else {
+                        Log.e("TAG", "Firebase authentication failed: ${task.exception?.message}")
+                        showSnackbar("Authentication Failed. Please try again.")
+                    }
                 }
             }
     }
+
 
     private fun updateUI(user: FirebaseUser?) {
         val intent = Intent(this@LoginSignUp, MenuMainActivity::class.java)
@@ -108,5 +166,14 @@ class LoginSignUp : AppCompatActivity(), View.OnClickListener {
 
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun createDatabase() {
+        val appClass = application as SplitwiseApplication
+        val userRepository = appClass.userRepository
+        val userViewModelFactory = UserViewModelFactory(userRepository)
+
+        userViewModel = ViewModelProvider(this, userViewModelFactory)
+            .get(UserViewModel::class.java)
     }
 }
