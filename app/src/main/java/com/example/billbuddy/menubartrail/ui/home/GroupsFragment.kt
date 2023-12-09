@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.widget.addTextChangedListener
@@ -25,7 +24,6 @@ class GroupsFragment : Fragment() {
     private lateinit var rvGroups: RecyclerView
     private lateinit var tvOverallAmount: TextView
     private lateinit var btnRefresh: MaterialButton
-    private  lateinit var rvGroupImage: ImageView
     private lateinit var viewModel: GroupsViewModel
     companion object {
         fun Double.format(digits: Int) = "%.${digits}f".format(this)

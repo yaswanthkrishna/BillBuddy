@@ -66,7 +66,7 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_transaction, R.id.nav_Contact
+                R.id.nav_home, R.id.nav_transaction, R.id.nav_ScaneCode, R.id.nav_Contact
             ), drawerLayout
         )
 
@@ -116,6 +116,9 @@ class MenuMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         when (item.itemId) {
             R.id.nav_home -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.nav_home)
+            }
+            R.id.nav_ScaneCode -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_ScaneCode)
             }
             R.id.nav_transaction -> {
                 val intent = Intent(this, TransactionsActivity::class.java)

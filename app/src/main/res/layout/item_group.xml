@@ -11,19 +11,10 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
         <!-- Your item content here -->
-        <ImageView
-            android:id = "@+id/rvGroupImage"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:background = "@drawable/triangles_1430105_1920"
-            android:src = "@drawable/home"/>
         <TextView
             android:id="@+id/groupName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/rvGroupImage"
-            android:layout_marginStart="30dp"
-            android:textSize="20sp"
             android:text="Friend's Name"
             android:clickable="true"/>
         <TextView

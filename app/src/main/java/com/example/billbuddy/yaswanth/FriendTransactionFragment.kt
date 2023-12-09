@@ -1,6 +1,5 @@
 package com.example.billbuddy.yaswanth
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,10 +15,6 @@ import com.example.billbuddy.databinding.FragmentFriendsBinding
 import com.example.billbuddy.databinding.FragmentTransactionsBinding
 import com.example.billbuddy.vinay.database.SplitwiseDatabase
 import com.example.billbuddy.vinay.database.transactions.TransactionEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FriendTransactionFragment : Fragment() {
     private var _binding: FragmentTransactionsBinding? = null
@@ -34,7 +29,7 @@ class FriendTransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val transactionDao = SplitwiseDatabase.getDatabase(requireContext()).getMyTransactionEntries()
         viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionDao))[TransactionsViewModel::class.java]
-        transactionsAdapter = TransactionsAdapter(requireContext(),getCurrentUserId()) { transaction ->
+        transactionsAdapter = TransactionsAdapter(requireContext()) { transaction ->
             openTransactionDetails(transaction)
         }
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_trans)
@@ -55,10 +50,6 @@ class FriendTransactionFragment : Fragment() {
             ?.replace(R.id.fragmentContainerTransaction, transactionDetailFragment) // Corrected container ID
             ?.addToBackStack(null)
             ?.commit()
-    }
-    private fun getCurrentUserId(): Long {
-        val sharedPreferences = requireActivity().getSharedPreferences("YourPreferenceName", Context.MODE_PRIVATE)
-        return sharedPreferences.getLong("currentUserId", -1) // -1 or any default value indicating no ID was found
     }
     override fun onDestroyView() {
         super.onDestroyView()

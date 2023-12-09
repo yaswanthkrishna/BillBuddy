@@ -4,6 +4,5 @@ data class GroupDetail(
     val id: Long,
     val name: String,
     val totalOwed: Double,
-    val totalOwes: Double,
-    val type: String
+    val totalOwes: Double
 )
