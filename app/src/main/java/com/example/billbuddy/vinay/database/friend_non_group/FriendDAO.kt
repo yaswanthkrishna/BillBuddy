@@ -28,4 +28,8 @@ interface FriendDAO {
 
     @Query("SELECT * FROM friends_table WHERE name LIKE :name")
     suspend fun getFriendsByName(name: String): List<FriendEntity>
+
+    @Query("SELECT SUM(total_due) FROM friends_table WHERE user_id = :userId")
+    suspend fun getTotalOwedByOthers(userId: Long): Double?
+
 }
