@@ -633,15 +633,14 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
 
     private suspend fun fetchFriends() {
         // Assume you have a function to get friends from your database
-        delay(50)
+        delay(100)
         val friendsList = getFriendsFromDatabase()
-        Log.d("fetchFriends", "$friendsList")
 
         // Convert the friendsList to ContactTempModel
         friendsAddedList.clear()
         for (friend in friendsList) {
             val nameAndPhone = userRepository.getNameAndPhoneByUserId(friend.friendUserId)
-            Log.d("fetchFriends", "nameAndPhone: $nameAndPhone")
+
             val contactTempModel = ContactTempModel(nameAndPhone?.phone, nameAndPhone?.name)
             friendsAddedList.add(contactTempModel)
         }
@@ -693,13 +692,13 @@ class AddExpenseActivity : AppCompatActivity(), ContactCommunicator, OnNameSelec
     private suspend fun getFriendsFromDatabase(): List<FriendEntity> = suspendCoroutine { continuation ->
 
         val currentUser = usersList.firstOrNull { it.user_id.toLong() == preferenceHelper.readLongFromPreference(SplitwiseApplication.PREF_USER_ID) }
-        Log.d("FetchFriends", "CurrentUser: $currentUser")
+
 
         val friendsLiveData = currentUser?.let { friendViewModel.getFriendsList(it.user_id) }
-        Log.d("FetchFriends", "FriendListData: $friendsLiveData")
+
 
         friendsLiveData?.observeOnce(this) { friendsList ->
-            Log.d("FetchFriends", "FriendList: $friendsList")
+
             continuation.resume(friendsList ?: emptyList())
         }
     }
